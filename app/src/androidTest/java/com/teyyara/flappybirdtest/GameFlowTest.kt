@@ -1,7 +1,5 @@
 package com.teyyara.flappybirdtest
 
-import androidx.compose.ui.test.assertDoesNotExist
-import androidx.compose.ui.test.assertExists
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -18,9 +16,14 @@ class GameFlowTest {
 
     @Test
     fun tappingReadyScreenStartsTheGameAndShowsScoreHud() {
+        // The running game owns a continuous frame loop. Freeze auto-advance and explicitly
+        // advance a frame after tapping so the resulting Compose state is applied predictably.
         composeRule.mainClock.autoAdvance = false
+
         composeRule.onNodeWithTag("readyTitle").assertExists()
         composeRule.onNodeWithTag("gameCanvas").performTouchInput { click() }
+        composeRule.mainClock.advanceTimeByFrame()
+
         composeRule.onNodeWithTag("scoreHud").assertExists()
         composeRule.onNodeWithTag("readyTitle").assertDoesNotExist()
     }
