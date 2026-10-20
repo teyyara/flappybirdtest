@@ -1,11 +1,12 @@
 plugins {
     id("com.android.application")
+    id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
 android {
     namespace = "com.teyyara.flappybirdtest"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.teyyara.flappybirdtest"
@@ -16,28 +17,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures {
-        compose = true
-    }
+    buildFeatures { compose = true }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    testOptions {
-        animationsDisabled = true
-    }
+    kotlinOptions { jvmTarget = "17" }
+    testOptions { animationsDisabled = true }
 
     packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
     }
 }
 
 dependencies {
-    val composeBom = platform("androidx.compose:compose-bom:2026.09.00")
+    val composeBom = platform("androidx.compose:compose-bom:2026.01.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
 
