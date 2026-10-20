@@ -18,7 +18,7 @@ jobs:
   android:
     name: Build, unit tests, lint and emulator flow
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 40
     permissions:
       contents: read
     steps:
@@ -58,6 +58,21 @@ jobs:
           printf '{"commit":"%s","run_id":"%s","run_attempt":"%s","runner_os":"%s"}\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$RUNNER_OS" > evidence/ci/manifest.json
           find app/build/outputs/apk -type f -name '*.apk' -exec sha256sum {} \; > evidence/ci/apk-sha256.txt 2>/dev/null || true
 
+      - name: Enable KVM acceleration for the Android emulator
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -e /dev/kvm ]; then
+            echo "::error::This runner does not expose /dev/kvm; a reliable Android emulator run is unavailable."
+            exit 1
+          fi
+          sudo chmod 666 /dev/kvm
+          if [ ! -r /dev/kvm ] || [ ! -w /dev/kvm ]; then
+            echo "::error::The runner still cannot read/write /dev/kvm."
+            exit 1
+          fi
+          ls -l /dev/kvm
+
       - name: Run UI flow on Android Emulator
         uses: ReactiveCircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed
         with:
@@ -65,6 +80,9 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: pixel_2
+          emulator-boot-timeout: 900
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-linux-hw-accel: false
           disable-animations: true
           script: ./gradlew --no-daemon connectedDebugAndroidTest
 

@@ -4,6 +4,32 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+val releaseKeystorePath = System.getenv("ANDROID_KEYSTORE_PATH")
+val releaseStorePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+val releaseKeyAlias = System.getenv("ANDROID_KEY_ALIAS")
+val releaseKeyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+val releaseSigningConfigured = listOf(
+    releaseKeystorePath,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword
+).all { !it.isNullOrBlank() }
+
+val releasePackageTaskRequested = gradle.startParameter.taskNames.any { taskName ->
+    taskName.substringAfterLast(':').lowercase() in setOf("bundlerelease", "assemblerelease")
+}
+
+if (releasePackageTaskRequested && !releaseSigningConfigured) {
+    throw GradleException(
+        "A signed release is required. Set ANDROID_KEYSTORE_PATH, " +
+            "ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, and ANDROID_KEY_PASSWORD."
+    )
+}
+
+if (releaseSigningConfigured && !file(releaseKeystorePath!!).isFile) {
+    throw GradleException("ANDROID_KEYSTORE_PATH does not point to an existing keystore file.")
+}
+
 android {
     namespace = "com.teyyara.flappybirdtest"
     compileSdk = 36
@@ -26,6 +52,26 @@ android {
 
     kotlinOptions { jvmTarget = "17" }
     testOptions { animationsDisabled = true }
+
+    signingConfigs {
+        create("release") {
+            if (releaseSigningConfigured) {
+                storeFile = file(releaseKeystorePath!!)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            if (releaseSigningConfigured) {
+                signingConfig = signingConfigs.getByName("release")
+            }
+        }
+    }
 
     packaging {
         resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" }
