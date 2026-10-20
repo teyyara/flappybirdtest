@@ -45,7 +45,7 @@ jobs:
             exit 1
           fi
           { yes || true; } | "$SDKMANAGER" --licenses >/dev/null
-          "$SDKMANAGER" "platforms;android-36" "build-tools;36.0.0" "platform-tools" "emulator" "system-images;android-36;google_apis;x86_64"
+          "$SDKMANAGER" "platforms;android-37" "build-tools;36.0.0" "platform-tools" "emulator" "system-images;android-37;google_apis;x86_64"
 
       - name: Run JVM tests, lint and debug build
         run: ./gradlew --no-daemon testDebugUnitTest lintDebug assembleDebug
@@ -61,7 +61,7 @@ jobs:
       - name: Run UI flow on Android Emulator
         uses: ReactiveCircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed
         with:
-          api-level: 36
+          api-level: 37
           target: google_apis
           arch: x86_64
           profile: pixel_2

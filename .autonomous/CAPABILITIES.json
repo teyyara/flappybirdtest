@@ -19,11 +19,14 @@
     "selected_plane": "REMOTE-CI"
   },
   "remote_ci": {
-    "workflow_in_repo": "candidate will add Android validation",
-    "actions_enabled": "not yet verified by a run",
-    "public_standard_runner_cost": "official GitHub documentation says standard GitHub-hosted runners are free for public repositories",
+    "workflow": ".github/workflows/android-validation.yml",
+    "actions_enabled": true,
+    "run_39350769848": "FAILED_SDK_LICENSE_PIPE",
+    "run_39350819155": "FAILED_AGP_COMPOSE_METADATA_MISMATCH",
+    "next_run": "expected on the current toolchain remediation commit",
+    "standard_runner_cost": "official GitHub documentation says standard GitHub-hosted runners are free for public repositories",
     "secrets_required": false,
-    "result_access": "inspect actual workflow run before claims"
+    "result_access": "GitHub connector can inspect run status, job logs and artifacts"
   },
   "secrets": {
     "production_secrets_required": false,

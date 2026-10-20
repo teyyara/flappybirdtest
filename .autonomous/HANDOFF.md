@@ -3,17 +3,14 @@
 ## Current objective
 Build a native offline Android game named Sky Hopper in com.teyyara.flappybirdtest.
 
-## Baseline
-The repository was empty at bootstrap. The initial README-only commit is the sole starting checkpoint; there is no known-good app build or release.
-
-## Planned implementation
-Kotlin + Jetpack Compose, a Canvas game world, a deterministic pure Kotlin engine, touch-to-flap controls, scoring, collisions, restart, and SharedPreferences personal-best persistence.
+## Baseline and implementation
+The app is committed: Compose/Canvas scene with custom bird and pipe art, one-touch controls, physics/collision/score engine, game-over/restart UI, saved personal best, JVM tests, Android emulator smoke test, portable scripts, and repository memory. No release is certified.
 
 ## Validation route
-The connected workspace has no Gradle installation, Android SDK, adb, or emulator. Use the repository-backed GitHub Actions workflow, then retrieve its actual status and evidence. Workflow creation or a push alone does not prove test success.
+The current session has no Android SDK, adb, emulator or installed Gradle. Use repository-backed GitHub Actions; inspect the actual run and artifact. Workflow creation is not test evidence.
 
-## Before calling this checkpoint complete
-Inspect branch and commit, build/unit/lint output, emulator boot, instrumented UI test, APK SHA-256, and uploaded reports. Update STATE.json, TEST_EXECUTION.md, EVIDENCE_INDEX.md, FAILURES.md, SESSION_LOG.md, and this file from observed results only.
+## Latest observed issue
+Run 39350769848 failed because the SDK license pipeline returned a broken-pipe status; corrected in commit d10353a. Run 39350819155 passed SDK provisioning but failed build metadata checks because Compose 1.12.1 requires AGP 9.1+ and Android compile API 37. The latest change aligns to AGP 9.1.1, Gradle 9.3.1, compile API 37, and built-in Kotlin support.
 
 ## Next action
-Commit the project files and inspect the actual Actions run for the resulting commit.
+Inspect the workflow run on the newly created toolchain commit. Fix any actual compile/test/emulator failures in bounded, evidence-driven changes; record only observed results.

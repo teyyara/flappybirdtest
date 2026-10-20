@@ -2,8 +2,8 @@
   "schema_version": 1,
   "strategy_version": "1.1",
   "project_status": "IN_PROGRESS",
-  "current_phase": "IMPLEMENTATION",
-  "current_goal": "Create and validate the native Sky Hopper game in the empty repository.",
+  "current_phase": "TOOLCHAIN_REMEDIATION",
+  "current_goal": "Build and validate the native Sky Hopper arcade game.",
   "current_candidate_branch": "main",
   "current_candidate_commit": "",
   "last_checkpoint_commit": "",
@@ -17,26 +17,27 @@
   "active_ci_run_ids": [],
   "execution_route": "REMOTE_CI",
   "local_android_toolchain_status": "BLOCKED_NO_ANDROID_SDK_GRADLE_ADB_OR_EMULATOR",
-  "remote_ci_status": "WORKFLOW_CONFIGURED_RUN_NOT_YET_OBSERVED",
+  "remote_ci_status": "PREVIOUS_RUN_FAILED_TOOLCHAIN_MISMATCH_REMEDIATION_COMMITTED",
   "runtime_test_status": "NOT_RUN",
   "test_evidence_retrievable": false,
   "completed_work": [
-    "Repository metadata and write permissions inspected.",
-    "Official Android/Compose and GitHub Actions references checked.",
-    "Game architecture and offline-only product scope defined."
+    "Native app, game engine, original Canvas art and local score persistence implemented.",
+    "JVM game-engine tests and Compose emulator smoke test authored.",
+    "Portable scripts, repository memory and the full supplied Android engineering strategy committed.",
+    "Corrected the SDK license broken-pipe behavior based on CI logs."
   ],
   "pending_work": [
-    "Commit source project and validation workflow.",
-    "Inspect the actual CI run, logs, reports, emulator test and APK artifact.",
-    "Fix any evidence-supported defects and rerun affected checks."
+    "Inspect the new API 37/AGP 9.1.1 CI run.",
+    "Fix and rerun any evidence-supported compilation, unit-test, lint, or emulator failures.",
+    "Retrieve the APK and reports, record hashes, and assess behavior based on actual runtime evidence."
   ],
   "known_blockers": [
-    "This execution environment has Java 21 but no Gradle installation, Android SDK, adb, or emulator; local Android build/runtime validation is unavailable."
+    "Local Android build/runtime execution is unavailable; successful remote build and emulator results have not yet been observed."
   ],
-  "latest_validation_status": "NOT_RUN",
+  "latest_validation_status": "FAIL_PREVIOUS_RUN_COMPOSE_REQUIRES_AGP_9_1_AND_API_37",
   "latest_artifact_path": "",
   "latest_artifact_sha256": "",
   "latest_release_status": "NOT_RELEASED",
-  "next_action": "Commit the app, portable test harness, full strategy and memory; then inspect the workflow run for the exact commit.",
+  "next_action": "Inspect the automated CI run triggered by the current toolchain upgrade; verify the candidate SHA and all test reports.",
   "updated_at": "2026-10-20"
 }
