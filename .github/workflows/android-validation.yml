@@ -44,7 +44,7 @@ jobs:
             echo "sdkmanager was not found in the hosted runner Android SDK."
             exit 1
           fi
-          yes | "$SDKMANAGER" --licenses >/dev/null
+          { yes || true; } | "$SDKMANAGER" --licenses >/dev/null
           "$SDKMANAGER" "platforms;android-36" "build-tools;36.0.0" "platform-tools" "emulator" "system-images;android-36;google_apis;x86_64"
 
       - name: Run JVM tests, lint and debug build
