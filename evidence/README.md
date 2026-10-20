@@ -1,0 +1,1 @@
+CI build outputs, JUnit reports, lint reports, instrumentation reports, screenshots, and APK digests should be retrieved from the corresponding GitHub Actions artifact and indexed in .autonomous/EVIDENCE_INDEX.md. Do not commit build outputs, secrets, or personal data to this directory.

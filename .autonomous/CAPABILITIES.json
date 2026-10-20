@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-10-20",
+  "repository": {
+    "full_name": "teyyara/flappybirdtest",
+    "visibility": "public",
+    "write_permission": true,
+    "default_branch": "main",
+    "starting_state": "empty; initial README commit created"
+  },
+  "local_environment": {
+    "os": "Linux x86_64",
+    "java": "OpenJDK 21.0.12.1 available",
+    "gradle_executable": false,
+    "android_home": false,
+    "android_sdk": false,
+    "adb": false,
+    "emulator": false,
+    "sdkmanager": false,
+    "selected_plane": "REMOTE-CI"
+  },
+  "remote_ci": {
+    "workflow_in_repo": "candidate will add Android validation",
+    "actions_enabled": "not yet verified by a run",
+    "public_standard_runner_cost": "official GitHub documentation says standard GitHub-hosted runners are free for public repositories",
+    "secrets_required": false,
+    "result_access": "inspect actual workflow run before claims"
+  },
+  "secrets": {
+    "production_secrets_required": false,
+    "signing_key_required_for_debug_build": false,
+    "secret_values_recorded": false
+  }
+}
