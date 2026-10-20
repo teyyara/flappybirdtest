@@ -19,8 +19,12 @@ A native Android arcade game inspired by one-tap flap-and-dodge gameplay. It use
 
 ## Build and test
 
-From a machine with JDK 17 and the Android SDK installed, run: ./gradlew testDebugUnitTest, ./gradlew lintDebug, and ./gradlew assembleDebug. With an online emulator/device, run ./gradlew connectedDebugAndroidTest. On Windows use gradlew.bat. Portable environment and test scripts live in scripts/.
+From a machine with JDK 17 and the Android SDK installed, run ./gradlew testDebugUnitTest, ./gradlew lintDebug, and ./gradlew assembleDebug. With an online emulator/device, run ./gradlew connectedDebugAndroidTest. On Windows use gradlew.bat. Portable environment and test scripts live in scripts/.
 
-The public GitHub Actions workflow builds, runs JVM tests and lint, launches an Android 36 emulator, and runs the Compose smoke journey. Results are only considered verified after inspecting the corresponding workflow run and reports.
+The public GitHub Actions workflow builds, runs JVM tests and lint, launches an Android emulator, and runs the Compose smoke journey. Results are only considered verified after inspecting the corresponding workflow run and reports.
 
 The debug APK is produced at app/build/outputs/apk/debug/app-debug.apk after a successful build. This is a development artifact, not a signed Play release.
+
+## Google Play release
+
+See docs/PLAY_RELEASE.md for upload-key setup, secure GitHub Actions secrets, signed Android App Bundle generation, artifact retrieval, and the Play Console checklist. Trigger the Android Play release bundle workflow from the Actions tab only after adding all four required repository secrets.

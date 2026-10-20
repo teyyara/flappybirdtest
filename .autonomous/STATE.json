@@ -2,12 +2,12 @@
   "schema_version": 1,
   "strategy_version": "1.1",
   "project_status": "IN_PROGRESS",
-  "current_phase": "TOOLCHAIN_REMEDIATION",
-  "current_goal": "Build and validate the native Sky Hopper arcade game.",
+  "current_phase": "PLAY_RELEASE_PREPARATION",
+  "current_goal": "Validate Sky Hopper and prepare a signed Google Play App Bundle using a user-owned upload key.",
   "current_candidate_branch": "main",
   "current_candidate_commit": "",
-  "last_checkpoint_commit": "",
-  "last_known_good_commit": "",
+  "last_checkpoint_commit": "719ab7b12c19871d36168de1d43f9fb313c0c0fa",
+  "last_known_good_commit": "bc23082758cbb9b221d12e371ee995fa5cc6f241",
   "last_known_good_release": "",
   "application_id": "com.teyyara.flappybirdtest",
   "version_code": 1,
@@ -17,27 +17,32 @@
   "active_ci_run_ids": [],
   "execution_route": "REMOTE_CI",
   "local_android_toolchain_status": "BLOCKED_NO_ANDROID_SDK_GRADLE_ADB_OR_EMULATOR",
-  "remote_ci_status": "PREVIOUS_RUN_FAILED_TOOLCHAIN_MISMATCH_REMEDIATION_COMMITTED",
-  "runtime_test_status": "NOT_RUN",
-  "test_evidence_retrievable": false,
+  "remote_ci_status": "JVM_TESTS_LINT_DEBUG_BUILD_PASS; EMULATOR_UI_TEST_FAILED_KVM_PERMISSION_RUN_39353520915",
+  "runtime_test_status": "FAILED_INFRASTRUCTURE_KVM_PERMISSION",
+  "test_evidence_retrievable": true,
   "completed_work": [
     "Native app, game engine, original Canvas art and local score persistence implemented.",
-    "JVM game-engine tests and Compose emulator smoke test authored.",
-    "Portable scripts, repository memory and the full supplied Android engineering strategy committed.",
-    "Corrected the SDK license broken-pipe behavior based on CI logs."
+    "Six deterministic JVM game-engine tests passed in CI run 39351434704.",
+    "JVM tests, lint and debug APK assembly passed in CI run 39353520915.",
+    "Environment-only Gradle release signing configuration and a manual signed Play App Bundle workflow added.",
+    "Release documentation explains how to create and back up an upload key and configure GitHub Actions secrets.",
+    "Validation and release workflows now explicitly check hosted-runner KVM access before starting an emulator."
   ],
   "pending_work": [
-    "Inspect the new API 37/AGP 9.1.1 CI run.",
-    "Fix and rerun any evidence-supported compilation, unit-test, lint, or emulator failures.",
-    "Retrieve the APK and reports, record hashes, and assess behavior based on actual runtime evidence."
+    "Verify the new CI run after the KVM permission fix.",
+    "User must create and back up an upload keystore and add the four documented Actions repository secrets.",
+    "Run the signed Play release workflow and inspect the AAB signature, digest and uploaded artifact.",
+    "Complete Play Console listing, policy declarations, internal testing and final user acceptance."
   ],
   "known_blockers": [
-    "Local Android build/runtime execution is unavailable; successful remote build and emulator results have not yet been observed."
+    "Local Android build/runtime execution is unavailable; remote CI remains the execution route.",
+    "No user-owned upload keystore or GitHub Actions signing secrets have been provisioned, so a signed Play bundle cannot yet be produced.",
+    "The latest observed emulator test failed because the hosted runner lacked permission to use /dev/kvm; the workflow remediation is committed but not yet validated."
   ],
-  "latest_validation_status": "FAIL_PREVIOUS_RUN_COMPOSE_REQUIRES_AGP_9_1_AND_API_37",
-  "latest_artifact_path": "",
-  "latest_artifact_sha256": "",
-  "latest_release_status": "NOT_RELEASED",
-  "next_action": "Inspect the automated CI run triggered by the current toolchain upgrade; verify the candidate SHA and all test reports.",
+  "latest_validation_status": "FAIL_EMULATOR_STARTUP_NO_KVM_PERMISSION_RUN_39353520915",
+  "latest_artifact_path": "GitHub Actions artifact from run 39351434704: app/build/outputs/apk/debug/app-debug.apk",
+  "latest_artifact_sha256": "d6dc1cca64c74c849774d008529b2e612200bd3b6efb25639b5e4936426c8061",
+  "latest_release_status": "NOT_RELEASED_SIGNING_KEY_AND_SECRETS_REQUIRED",
+  "next_action": "Inspect CI run triggered by the KVM remediation; then the user provisions the upload key and four Actions secrets before running Android Play release bundle.",
   "updated_at": "2026-10-20"
 }

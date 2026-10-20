@@ -1,8 +1,10 @@
 # Plan
 
-1. Implement native gameplay, drawing, score HUD, best-score persistence, and restart.
-2. Add deterministic JVM tests for game status, flap impulse, scoring, collisions and restart.
-3. Add a Compose emulator smoke test for the start-to-game journey.
-4. Run JUnit, Android Lint, debug assembly, and API 37 emulator tests through the public-repository CI route.
-5. Inspect all result reports and the exact candidate/artifact identity; fix failures using bounded, evidence-driven changes.
-6. Certify only a validated candidate. Store/Play release is out of scope until explicitly requested.
+1. Implement native gameplay, drawing, score HUD, best-score persistence, and restart. (Complete.)
+2. Add deterministic JVM tests for game status, flap impulse, scoring, collisions and restart. (Complete; inspect actual CI report.)
+3. Add a Compose emulator smoke test for the start-to-game journey. (Authored; runtime pass is still unverified due hosted emulator/KVM permissions.)
+4. Run JVM tests, Android Lint, debug assembly, and API 36 emulator tests through public-repository CI.
+5. Apply the evidence-supported KVM permission remediation and inspect the run, reports and artifact identity.
+6. Configure release signing to use environment-only credentials and add a manual signed Android App Bundle workflow. (Configured in source; awaiting test and user-owned secrets.)
+7. Run the signed-release workflow only after the upload key and repository secrets are provisioned; inspect AAB signature and SHA-256 evidence.
+8. Complete Play Console onboarding, store listing and declarations, internal testing, and final user acceptance before publication.
