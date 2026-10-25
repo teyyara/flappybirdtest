@@ -211,21 +211,26 @@ fun GameScreen() {
 
         if (status == GameStatus.READY) {
             Column(
-                modifier = Modifier.align(Alignment.Center).offset(y = (-8).dp).fillMaxWidth()
-                    .heightIn(max = screenHeight * 0.88f).verticalScroll(rememberScrollState()).padding(horizontal = 28.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                modifier = Modifier.align(Alignment.Center).fillMaxWidth()
+                    .heightIn(max = screenHeight * 0.88f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 22.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Surface(color = Color(0xE6FFFFFF), shape = RoundedCornerShape(28.dp), shadowElevation = 14.dp) {
+                Surface(
+                    color = Color(0xE6FFFFFF),
+                    shape = RoundedCornerShape(28.dp),
+                    shadowElevation = 14.dp
+                ) {
                     Column(
-                        modifier = Modifier.padding(horizontal = 25.dp, vertical = 25.dp),
+                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             "SKY HOPPER",
                             modifier = Modifier.testTag("readyTitle"),
-                            fontSize = 35.sp,
-                            lineHeight = 40.sp,
+                            fontSize = 34.sp,
+                            lineHeight = 39.sp,
                             letterSpacing = 1.5.sp,
                             fontWeight = FontWeight.Black,
                             color = Color(0xFF19364A),
@@ -233,44 +238,13 @@ fun GameScreen() {
                         )
                         Text(
                             "FLAP. FLOAT. FLY.",
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier.padding(top = 4.dp),
                             fontSize = 11.sp,
                             letterSpacing = 3.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color(0xFF2D6E82)
                         )
-                        Spacer(Modifier.height(22.dp))
-                        Surface(color = Color(0xFFF0FAF8), shape = RoundedCornerShape(18.dp)) {
-                            Column(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text("YOUR LITTLE ADVENTURE", fontSize = 10.sp, letterSpacing = 1.3.sp, fontWeight = FontWeight.Black, color = Color(0xFF4A8A91))
-                                Text(
-                                    "Tap to flap. Slip through the pipes.",
-                                    modifier = Modifier.padding(top = 7.dp),
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF19364A),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-                        Spacer(Modifier.height(12.dp))
-                        ActionButton(
-                            label = "HOW TO PLAY",
-                            testTag = "howToPlayButton",
-                            onClick = { showHowToPlay = true },
-                            primary = false,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        SoundToggleButton(
-                            enabled = soundEnabled,
-                            compact = false,
-                            onToggle = toggleSound,
-                            modifier = Modifier.fillMaxWidth()
-                        )
+
                         Spacer(Modifier.height(12.dp))
                         CharacterSelector(
                             selected = selectedCharacter,
@@ -280,16 +254,7 @@ fun GameScreen() {
                                 preferences.edit().putString("bird_character", selection.name).apply()
                             }
                         )
-                        Spacer(Modifier.height(17.dp))
-                        DifficultySelector(
-                            selected = selectedDifficulty,
-                            onSelect = { selection ->
-                                selectedDifficulty = selection
-                                engine.selectDifficulty(selection)
-                                preferences.edit().putString("flight_difficulty", selection.name).apply()
-                            }
-                        )
-                        Spacer(Modifier.height(19.dp))
+                        Spacer(Modifier.height(12.dp))
                         ActionButton(
                             label = "START FLIGHT",
                             testTag = "playButton",
@@ -298,11 +263,54 @@ fun GameScreen() {
                         )
                         Text(
                             "PERSONAL BEST  $bestScore",
-                            modifier = Modifier.padding(top = 16.dp),
+                            modifier = Modifier.padding(top = 10.dp),
                             fontSize = 10.sp,
                             letterSpacing = 1.1.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color(0xFF2D6E82)
+                        )
+
+                        Spacer(Modifier.height(15.dp))
+                        Surface(
+                            color = Color(0xFFF0FAF8),
+                            shape = RoundedCornerShape(18.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    "CHOOSE YOUR FLIGHT",
+                                    fontSize = 10.sp,
+                                    letterSpacing = 1.1.sp,
+                                    fontWeight = FontWeight.Black,
+                                    color = Color(0xFF4A8A91)
+                                )
+                                Spacer(Modifier.height(8.dp))
+                                DifficultySelector(
+                                    selected = selectedDifficulty,
+                                    onSelect = { selection ->
+                                        selectedDifficulty = selection
+                                        engine.selectDifficulty(selection)
+                                        preferences.edit().putString("flight_difficulty", selection.name).apply()
+                                    }
+                                )
+                            }
+                        }
+                        Spacer(Modifier.height(10.dp))
+                        SoundToggleButton(
+                            enabled = soundEnabled,
+                            compact = false,
+                            onToggle = toggleSound,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        ActionButton(
+                            label = "HOW TO PLAY",
+                            testTag = "howToPlayButton",
+                            onClick = { showHowToPlay = true },
+                            primary = false,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
