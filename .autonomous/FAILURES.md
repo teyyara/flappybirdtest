@@ -25,3 +25,11 @@
 ## Release blocker
 - No upload key or signing secrets have been created/provisioned. A signed release bundle must not be produced or certified before the owner creates a durable private backup of the upload key and configures the GitHub Actions secrets.
 - Local Android execution is unavailable because the container has no Gradle executable, Android SDK, adb, emulator, or sdkmanager.
+
+
+## Run 40199740196 — launch menu controls fell below the visible viewport
+
+- Candidate: `a68cf028d000c5a78d22f6424622947434c8065b`.
+- JVM tests, lint, debug build, and artifact upload passed. The emulator test report showed four UI assertion failures after the character picker was added. The menu controls existed in the semantics tree, but the longer scrollable menu put Start Flight below the visible area; gameplay-flow tests tapped it without first scrolling it into view, so the game remained on the menu. The system-Back test then triggered the Activity's default exit behavior because no run had started.
+- Remediation: move the character picker and Start Flight action to the top of the launch card, place difficulty/sound/help below them, and make UI tests explicitly scroll menu controls into view before tapping. This improves the real first-launch path and makes tests match actual scrollable-menu interaction.
+- Candidate is not mergeable until the fresh CI run for the updated PR head proves the full emulator suite passes.
