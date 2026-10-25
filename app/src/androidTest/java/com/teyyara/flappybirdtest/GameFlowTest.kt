@@ -2,6 +2,7 @@ package com.teyyara.flappybirdtest
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -20,16 +21,18 @@ class GameFlowTest {
     fun mainMenuShowsStartAndSoundControls() {
         composeRule.mainClock.autoAdvance = false
 
-        composeRule.onNodeWithTag("readyTitle").assertExists()
-        composeRule.onNodeWithTag("playButton").assertExists()
-        composeRule.onNodeWithTag("soundToggle").assertExists()
-        composeRule.onNodeWithTag("difficultyCHILL").assertExists()
-        composeRule.onNodeWithTag("difficultyCLASSIC").assertExists()
-        composeRule.onNodeWithTag("difficultyWILD").assertExists()
-        composeRule.onNodeWithTag("birdCharacterSUNNY").assertExists()
-        composeRule.onNodeWithTag("birdCharacterBERRY").assertExists()
-        composeRule.onNodeWithTag("birdCharacterMINT").assertExists()
-        composeRule.onNodeWithTag("birdCharacterEMBER").assertExists()
+        composeRule.onNodeWithTag("readyTitle").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("playButton").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("soundToggle").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("howToPlayButton").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("selectedBirdLabel").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("difficultyCHILL").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("difficultyCLASSIC").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("difficultyWILD").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("birdCharacterSUNNY").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("birdCharacterBERRY").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("birdCharacterMINT").assertExists().assertIsDisplayed()
+        composeRule.onNodeWithTag("birdCharacterEMBER").assertExists().assertIsDisplayed()
     }
 
     @Test
