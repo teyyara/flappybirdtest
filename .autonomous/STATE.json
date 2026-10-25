@@ -4,8 +4,8 @@
   "project_status": "IN_PROGRESS",
   "current_phase": "BIRD_CHARACTER_SELECTION",
   "current_goal": "Validate Sky Hopper v1.4: choose among four drawable birds from the launch menu, persist the choice, and use the selected bird in the live game without changing physics.",
-  "current_candidate_branch": "feature/bird-character-selection",
-  "current_candidate_commit": "TRACK_FINAL_BRANCH_HEAD_IN_PULL_REQUEST",
+  "current_candidate_branch": "feature/bird-character-selection-retry",
+  "current_candidate_commit": "TRACK_PR_5_HEAD_SHA",
   "last_checkpoint_commit": "917202db9da2f0c718e47605f9bb011fb9cbf7f1",
   "last_known_good_commit": "917202db9da2f0c718e47605f9bb011fb9cbf7f1",
   "application_id": "com.teyyara.flappybirdtest",
@@ -17,8 +17,8 @@
   "active_ci_run_ids": [],
   "execution_route": "REMOTE_CI",
   "local_android_toolchain_status": "BLOCKED_NO_ANDROID_SDK_GRADLE_ADB_OR_EMULATOR",
-  "remote_ci_status": "V1_4_CANDIDATE_PENDING",
-  "runtime_test_status": "V1_4_CANDIDATE_PENDING",
+  "remote_ci_status": "V1_4_RETRY_PR_PENDING",
+  "runtime_test_status": "PRIOR_RUN_40196979982_FAILED_TWO_UI_ASSERTIONS; RUN_40197625329_STALLED; RETRY_PENDING",
   "test_evidence_retrievable": true,
   "completed_work": [
     "v1.3 candidate passed 13 JVM tests and 8 Android emulator UI tests in run 40195467256.",
@@ -29,6 +29,7 @@
     "JVM tests and Compose UI tests added for character selection, persistence, mode consistency and fallback."
   ],
   "pending_work": [
+    "Validate the fixed candidate on the fresh retry PR; first UI run exposed two assertion issues and the second run did not finish.",
     "Finish review/docs and open PR targeting main.",
     "Run JVM tests, lint, debug build and Android API 36 emulator UI suite on the exact v1.4 candidate; repair failures.",
     "Merge only after candidate CI is green, then inspect main validation and retrieve verified v1.4 debug APK.",
@@ -38,14 +39,15 @@
     "Local Android build/runtime execution unavailable; use GitHub Actions.",
     "v1.4 candidate has not been compiled or emulator-tested yet.",
     "Physical-device test not performed.",
-    "Play Console is explicitly deferred."
+    "Play Console is explicitly deferred.",
+    "Original pull request CI run 40197625329 stayed in progress during emulator tests; a new pull-request ref is used to avoid the stale run's concurrency group."
   ],
-  "latest_validation_status": "PASS_V1_3_CANDIDATE_40195467256_AND_MAIN_40196050574",
-  "latest_validation_url": "https://github.com/teyyara/flappybirdtest/actions/runs/40195467256",
+  "latest_validation_status": "V1_4_BUILD_PASS; FIRST_EMULATOR_SUITE_FAILED; FIXED_CANDIDATE_RETRY_REQUIRED",
+  "latest_validation_url": "https://github.com/teyyara/flappybirdtest/actions/runs/40196979982",
   "latest_tested_candidate_commit": "041792e9dbde138d369af6ca489714ce98985dcd",
   "latest_debug_apk_version": "1.3",
   "latest_evidence_artifact_id": 12600390459,
   "latest_release_status": "NO_STORE_UPLOAD; PLAY_CONSOLE_DEFERRED",
-  "next_action": "Create and validate PR for feature/bird-character-selection, merge only if green, and retrieve verified main v1.4 debug APK.",
+  "next_action": "Open a clean validation PR from feature/bird-character-selection-retry, ensure the emulator suite passes, then merge and retrieve main v1.4 APK.",
   "updated_at": "2026-10-25"
 }
