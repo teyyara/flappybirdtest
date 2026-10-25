@@ -69,6 +69,9 @@ fun GameScreen() {
     var score by remember { mutableIntStateOf(0) }
     var bestScore by remember { mutableIntStateOf(preferences.getInt("best_score", 0)) }
     var soundEnabled by remember { mutableStateOf(preferences.getBoolean("sound_enabled", true)) }
+    var selectedDifficulty by remember {
+        mutableStateOf(FlightDifficulty.fromPreference(preferences.getString("flight_difficulty", FlightDifficulty.CLASSIC.name)))
+    }
     var hasUsedContinue by remember { mutableStateOf(false) }
     var showHowToPlay by remember { mutableStateOf(false) }
     var worldWidth by remember { androidx.compose.runtime.mutableFloatStateOf(360f) }
@@ -77,6 +80,7 @@ fun GameScreen() {
         if (soundEnabled) toneGenerator.startTone(tone, durationMillis)
     }
     val startNewRun = {
+        engine.selectDifficulty(selectedDifficulty)
         engine.startGame(worldWidth)
         score = 0
         hasUsedContinue = false
@@ -240,7 +244,16 @@ fun GameScreen() {
                                 )
                             }
                         }
-                        Spacer(Modifier.height(22.dp))
+                        Spacer(Modifier.height(17.dp))
+                        DifficultySelector(
+                            selected = selectedDifficulty,
+                            onSelect = { selection ->
+                                selectedDifficulty = selection
+                                engine.selectDifficulty(selection)
+                                preferences.edit().putString("flight_difficulty", selection.name).apply()
+                            }
+                        )
+                        Spacer(Modifier.height(19.dp))
                         ActionButton(
                             label = "START FLIGHT",
                             testTag = "playButton",
@@ -429,6 +442,58 @@ private fun BoxScope.OverlayCard(content: @Composable () -> Unit) {
         ) {
             content()
         }
+    }
+}
+
+@Composable
+private fun DifficultySelector(
+    selected: FlightDifficulty,
+    onSelect: (FlightDifficulty) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            "CHOOSE YOUR FLIGHT",
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 10.sp,
+            letterSpacing = 1.2.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF4A8A91),
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            FlightDifficulty.values().forEach { difficulty ->
+                val isSelected = difficulty == selected
+                Button(
+                    onClick = { onSelect(difficulty) },
+                    modifier = Modifier.weight(1f).height(43.dp).testTag("difficulty${difficulty.name}"),
+                    shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 3.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isSelected) Color(0xFFFFC83D) else Color(0xFFE7F3F1),
+                        contentColor = Color(0xFF19364A)
+                    )
+                ) {
+                    Text(
+                        difficulty.label,
+                        fontSize = 9.sp,
+                        letterSpacing = 0.4.sp,
+                        fontWeight = FontWeight.Black,
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+        Text(
+            selected.description,
+            modifier = Modifier.fillMaxWidth().padding(top = 7.dp),
+            fontSize = 10.sp,
+            color = Color(0xFF5C7A83),
+            textAlign = TextAlign.Center
+        )
     }
 }
 
