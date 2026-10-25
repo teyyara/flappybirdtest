@@ -48,6 +48,46 @@ enum class FlightDifficulty(
     }
 }
 
+enum class BirdAccessory { NONE, STAR, LEAF, CREST }
+
+/** Hand-drawn playable birds. Colors and accessories are used by both the menu preview and game. */
+enum class BirdCharacter(
+    val displayName: String,
+    val tagline: String,
+    val bodyColor: Int,
+    val highlightColor: Int,
+    val wingColor: Int,
+    val tailColor: Int,
+    val beakColor: Int,
+    val accessory: BirdAccessory
+) {
+    SUNNY(
+        "SUNNY", "The classic golden flyer",
+        0xFFF6B932.toInt(), 0xFFFFD34E.toInt(), 0xFFF1A92E.toInt(),
+        0xFFEAA72E.toInt(), 0xFFF47A38.toInt(), BirdAccessory.NONE
+    ),
+    BERRY(
+        "BERRY", "A little purple daydream",
+        0xFF9C6ADE.toInt(), 0xFFC3A0F2.toInt(), 0xFF7F4BC7.toInt(),
+        0xFF7640B2.toInt(), 0xFFFF9D70.toInt(), BirdAccessory.STAR
+    ),
+    MINT(
+        "MINT", "Cool, calm, and leafy",
+        0xFF37C6B1.toInt(), 0xFF7DE8D9.toInt(), 0xFF229C8D.toInt(),
+        0xFF178A7C.toInt(), 0xFFFFAB5B.toInt(), BirdAccessory.LEAF
+    ),
+    EMBER(
+        "EMBER", "A tiny bird with big fire",
+        0xFFF17855.toInt(), 0xFFFFAA6F.toInt(), 0xFFD95846.toInt(),
+        0xFFC94D3B.toInt(), 0xFFFFCF5A.toInt(), BirdAccessory.CREST
+    );
+
+    companion object {
+        fun fromPreference(value: String?): BirdCharacter =
+            values().firstOrNull { it.name == value } ?: SUNNY
+    }
+}
+
 internal data class Pipe(
     var x: Float,
     val gapCenter: Float,
@@ -62,6 +102,8 @@ class GameEngine(seed: Int = 2026) {
     var score: Int = 0
         private set
     var difficulty: FlightDifficulty = FlightDifficulty.CLASSIC
+        private set
+    var character: BirdCharacter = BirdCharacter.SUNNY
         private set
     internal var birdY: Float = VIRTUAL_HEIGHT * 0.46f
     internal var birdVelocity: Float = 0f
@@ -78,6 +120,13 @@ class GameEngine(seed: Int = 2026) {
     fun selectDifficulty(selection: FlightDifficulty) {
         if (status == GameStatus.READY || status == GameStatus.GAME_OVER) {
             difficulty = selection
+        }
+    }
+
+    /** Character selection is a menu action; current flights keep their chosen bird. */
+    fun selectCharacter(selection: BirdCharacter) {
+        if (status == GameStatus.READY || status == GameStatus.GAME_OVER) {
+            character = selection
         }
     }
 
