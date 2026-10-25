@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -35,7 +36,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.Lifecycle
@@ -55,7 +59,11 @@ fun GameScreen() {
     val preferences = remember(context) {
         context.getSharedPreferences("sky_hopper_preferences", Context.MODE_PRIVATE)
     }
-    val engine = remember { GameEngine() }
+    val engine = remember {
+        GameEngine().apply {
+            selectCharacter(BirdCharacter.fromPreference(preferences.getString("bird_character", BirdCharacter.SUNNY.name)))
+        }
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val toneGenerator = remember(context) {
@@ -72,6 +80,9 @@ fun GameScreen() {
     var selectedDifficulty by remember {
         mutableStateOf(FlightDifficulty.fromPreference(preferences.getString("flight_difficulty", FlightDifficulty.CLASSIC.name)))
     }
+    var selectedCharacter by remember {
+        mutableStateOf(BirdCharacter.fromPreference(preferences.getString("bird_character", BirdCharacter.SUNNY.name)))
+    }
     var hasUsedContinue by remember { mutableStateOf(false) }
     var showHowToPlay by remember { mutableStateOf(false) }
     var worldWidth by remember { androidx.compose.runtime.mutableFloatStateOf(360f) }
@@ -80,6 +91,7 @@ fun GameScreen() {
         if (soundEnabled) toneGenerator.startTone(tone, durationMillis)
     }
     val startNewRun = {
+        engine.selectCharacter(selectedCharacter)
         engine.selectDifficulty(selectedDifficulty)
         engine.startGame(worldWidth)
         score = 0
@@ -199,21 +211,26 @@ fun GameScreen() {
 
         if (status == GameStatus.READY) {
             Column(
-                modifier = Modifier.align(Alignment.Center).offset(y = (-8).dp).fillMaxWidth()
-                    .heightIn(max = screenHeight * 0.88f).verticalScroll(rememberScrollState()).padding(horizontal = 28.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                modifier = Modifier.align(Alignment.Center).fillMaxWidth()
+                    .heightIn(max = screenHeight * 0.88f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 22.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Surface(color = Color(0xE6FFFFFF), shape = RoundedCornerShape(28.dp), shadowElevation = 14.dp) {
+                Surface(
+                    color = Color(0xE6FFFFFF),
+                    shape = RoundedCornerShape(28.dp),
+                    shadowElevation = 14.dp
+                ) {
                     Column(
-                        modifier = Modifier.padding(horizontal = 25.dp, vertical = 25.dp),
+                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 20.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             "SKY HOPPER",
                             modifier = Modifier.testTag("readyTitle"),
-                            fontSize = 35.sp,
-                            lineHeight = 40.sp,
+                            fontSize = 34.sp,
+                            lineHeight = 39.sp,
                             letterSpacing = 1.5.sp,
                             fontWeight = FontWeight.Black,
                             color = Color(0xFF19364A),
@@ -221,30 +238,39 @@ fun GameScreen() {
                         )
                         Text(
                             "FLAP. FLOAT. FLY.",
-                            modifier = Modifier.padding(top = 5.dp),
+                            modifier = Modifier.padding(top = 4.dp),
                             fontSize = 11.sp,
                             letterSpacing = 3.sp,
                             fontWeight = FontWeight.ExtraBold,
                             color = Color(0xFF2D6E82)
                         )
-                        Spacer(Modifier.height(22.dp))
-                        Surface(color = Color(0xFFF0FAF8), shape = RoundedCornerShape(18.dp)) {
-                            Column(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text("YOUR LITTLE ADVENTURE", fontSize = 10.sp, letterSpacing = 1.3.sp, fontWeight = FontWeight.Black, color = Color(0xFF4A8A91))
-                                Text(
-                                    "Tap to flap. Slip through the pipes.",
-                                    modifier = Modifier.padding(top = 7.dp),
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = Color(0xFF19364A),
-                                    textAlign = TextAlign.Center
-                                )
+
+                        Spacer(Modifier.height(12.dp))
+                        CharacterSelector(
+                            selected = selectedCharacter,
+                            onSelect = { selection ->
+                                selectedCharacter = selection
+                                engine.selectCharacter(selection)
+                                preferences.edit().putString("bird_character", selection.name).apply()
                             }
-                        }
-                        Spacer(Modifier.height(17.dp))
+                        )
+                        Spacer(Modifier.height(12.dp))
+                        ActionButton(
+                            label = "START FLIGHT",
+                            testTag = "playButton",
+                            onClick = startNewRun,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Text(
+                            "PERSONAL BEST  $bestScore",
+                            modifier = Modifier.padding(top = 10.dp),
+                            fontSize = 10.sp,
+                            letterSpacing = 1.1.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(0xFF2D6E82)
+                        )
+
+                        Spacer(Modifier.height(12.dp))
                         DifficultySelector(
                             selected = selectedDifficulty,
                             onSelect = { selection ->
@@ -253,13 +279,6 @@ fun GameScreen() {
                                 preferences.edit().putString("flight_difficulty", selection.name).apply()
                             }
                         )
-                        Spacer(Modifier.height(19.dp))
-                        ActionButton(
-                            label = "START FLIGHT",
-                            testTag = "playButton",
-                            onClick = startNewRun,
-                            modifier = Modifier.fillMaxWidth()
-                        )
                         Spacer(Modifier.height(10.dp))
                         SoundToggleButton(
                             enabled = soundEnabled,
@@ -267,21 +286,13 @@ fun GameScreen() {
                             onToggle = toggleSound,
                             modifier = Modifier.fillMaxWidth()
                         )
-                        Spacer(Modifier.height(9.dp))
+                        Spacer(Modifier.height(8.dp))
                         ActionButton(
                             label = "HOW TO PLAY",
                             testTag = "howToPlayButton",
                             onClick = { showHowToPlay = true },
                             primary = false,
                             modifier = Modifier.fillMaxWidth()
-                        )
-                        Text(
-                            "PERSONAL BEST  $bestScore",
-                            modifier = Modifier.padding(top = 16.dp),
-                            fontSize = 10.sp,
-                            letterSpacing = 1.1.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(0xFF2D6E82)
                         )
                     }
                 }
@@ -290,9 +301,16 @@ fun GameScreen() {
 
         if (showHowToPlay) {
             OverlayCard {
-                Text("HOW TO PLAY", fontSize = 25.sp, letterSpacing = 0.6.sp, fontWeight = FontWeight.Black, color = Color(0xFF19364A))
+                Text("HOW TO PLAY", modifier = Modifier.testTag("howToPlayTitle"), fontSize = 25.sp, letterSpacing = 0.6.sp, fontWeight = FontWeight.Black, color = Color(0xFF19364A))
                 Text("A tiny bird. A big sky. One more try.", modifier = Modifier.padding(top = 5.dp), fontSize = 12.sp, color = Color(0xFF5C7A83), textAlign = TextAlign.Center)
-                Spacer(Modifier.height(19.dp))
+                Spacer(Modifier.height(10.dp))
+                ActionButton(
+                    label = "CLOSE GUIDE",
+                    testTag = "howToPlayCloseButton",
+                    onClick = { showHowToPlay = false },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(10.dp))
                 InstructionRow("01", "TAP TO FLAP", "Tap anywhere in the sky to lift your bird.")
                 Spacer(Modifier.height(13.dp))
                 InstructionRow("02", "THREAD THE PIPES", "Fly through each gap. Every pipe pair adds a point.")
@@ -300,13 +318,7 @@ fun GameScreen() {
                 InstructionRow("03", "PAUSE WHENEVER", "Use the pause button or your phone's Back action.")
                 Spacer(Modifier.height(13.dp))
                 InstructionRow("04", "ONE EXTRA CHANCE", "After a crash, continue once to keep your score.")
-                Spacer(Modifier.height(21.dp))
-                ActionButton(
-                    label = "GOT IT, LET'S FLY",
-                    testTag = "howToPlayCloseButton",
-                    onClick = { showHowToPlay = false },
-                    modifier = Modifier.fillMaxWidth()
-                )
+
             }
         }
 
@@ -441,6 +453,95 @@ private fun BoxScope.OverlayCard(content: @Composable () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             content()
+        }
+    }
+}
+
+@Composable
+private fun CharacterSelector(
+    selected: BirdCharacter,
+    onSelect: (BirdCharacter) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            "CHOOSE YOUR BIRD",
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 10.sp,
+            letterSpacing = 1.2.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF4A8A91),
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(8.dp))
+        BirdCharacter.values().toList().chunked(2).forEach { characterRow ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                characterRow.forEach { character ->
+                    val isSelected = character == selected
+                    Button(
+                        onClick = { onSelect(character) },
+                        modifier = Modifier.weight(1f).heightIn(min = 68.dp)
+                            .testTag("birdCharacter${character.name}")
+                            .semantics {
+                                contentDescription = "Select ${character.displayName} bird, ${if (isSelected) "selected" else "not selected"}"
+                            },
+                        shape = RoundedCornerShape(14.dp),
+                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 7.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isSelected) Color(0xFFFFE29B) else Color(0xFFE7F3F1),
+                            contentColor = Color(0xFF19364A)
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            BirdCharacterPreview(character)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    character.displayName,
+                                    fontSize = 10.sp,
+                                    letterSpacing = 0.3.sp,
+                                    fontWeight = FontWeight.Black,
+                                    maxLines = 1
+                                )
+                                Text(
+                                    character.tagline,
+                                    modifier = Modifier.padding(top = 2.dp),
+                                    fontSize = 8.sp,
+                                    lineHeight = 10.sp,
+                                    maxLines = 2
+                                )
+                            }
+                        }
+                    }
+                }
+                if (characterRow.size == 1) Spacer(Modifier.weight(1f))
+            }
+            Spacer(Modifier.height(7.dp))
+        }
+        Text(
+            "SELECTED: ${selected.displayName}",
+            modifier = Modifier.fillMaxWidth().testTag("selectedBirdLabel"),
+            fontSize = 9.sp,
+            letterSpacing = 1.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF2D6E82),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun BirdCharacterPreview(character: BirdCharacter) {
+    Canvas(modifier = Modifier.size(width = 43.dp, height = 42.dp)) {
+        val scaleFactor = minOf(size.width / 70f, size.height / 50f)
+        withTransform({ scale(scaleFactor, scaleFactor, pivot = Offset.Zero) }) {
+            drawBirdCharacter(character, bx = 34f, by = 27f, rotation = 0f)
         }
     }
 }

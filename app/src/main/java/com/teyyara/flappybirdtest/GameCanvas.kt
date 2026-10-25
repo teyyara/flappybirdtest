@@ -172,30 +172,78 @@ private fun DrawScope.drawGameWorld(engine: GameEngine, width: Float, ambientSec
     val birdY = engine.birdY + idleBob
     val rotation = if (engine.status == GameStatus.READY) sin(ambientSeconds * 2f) * 4f
         else (engine.birdVelocity / 9f).coerceIn(-24f, 75f)
-    rotate(rotation, pivot = Offset(engine.birdX, birdY)) {
-        val bx = engine.birdX
-        val by = birdY
+    drawBirdCharacter(engine.character, engine.birdX, birdY, rotation)
+}
+
+/** Shared bird renderer used by the live game and the menu character cards. */
+internal fun DrawScope.drawBirdCharacter(
+    character: BirdCharacter,
+    bx: Float,
+    by: Float,
+    rotation: Float
+) {
+    rotate(rotation, pivot = Offset(bx, by)) {
         val tail = Path().apply {
             moveTo(bx - 12f, by + 1f)
             lineTo(bx - 25f, by - 5f)
             lineTo(bx - 22f, by + 8f)
             close()
         }
-        drawPath(tail, Color(0xFFEAA72E))
-        drawOval(Color(0xFFF6B932), Offset(bx - 17f, by - 13f), Size(35f, 27f))
-        drawOval(Color(0xFFFFD34E), Offset(bx - 12f, by - 13f), Size(25f, 20f))
-        drawOval(Color(0xFFEA9D28), Offset(bx - 9f, by + 1f), Size(16f, 10f))
-        drawOval(Color(0xFFF1A92E), Offset(bx - 10f, by - 1f), Size(16f, 11f))
+        drawPath(tail, Color(character.tailColor))
+        drawOval(Color(character.bodyColor), Offset(bx - 17f, by - 13f), Size(35f, 27f))
+        drawOval(Color(character.highlightColor), Offset(bx - 12f, by - 13f), Size(25f, 20f))
+        drawOval(Color(character.wingColor), Offset(bx - 9f, by + 1f), Size(16f, 10f))
+        drawOval(Color(character.highlightColor), Offset(bx - 10f, by - 1f), Size(16f, 11f))
+
         val beak = Path().apply {
             moveTo(bx + 12f, by - 2f)
             lineTo(bx + 28f, by + 3f)
             lineTo(bx + 12f, by + 8f)
             close()
         }
-        drawPath(beak, Color(0xFFF47A38))
+        drawPath(beak, Color(character.beakColor))
         drawCircle(Color(0xFFFFFDF1), 6.3f, Offset(bx + 7f, by - 5f))
         drawCircle(Color(0xFF19364A), 3.1f, Offset(bx + 9f, by - 4.5f))
         drawCircle(Color(0xFFFFFFFF), 1.05f, Offset(bx + 10f, by - 5.5f))
+
+        when (character.accessory) {
+            BirdAccessory.NONE -> Unit
+            BirdAccessory.STAR -> {
+                val sparkle = Path().apply {
+                    moveTo(bx - 5f, by - 19f)
+                    lineTo(bx - 1f, by - 22f)
+                    lineTo(bx + 2f, by - 18f)
+                    lineTo(bx - 2f, by - 15f)
+                    close()
+                }
+                drawPath(sparkle, Color(0xFFFFF3A6))
+                drawCircle(Color(0xFFFFFFFF), 1.4f, Offset(bx - 4f, by + 5f))
+            }
+            BirdAccessory.LEAF -> {
+                val leaf = Path().apply {
+                    moveTo(bx - 8f, by - 14f)
+                    quadraticTo(bx - 3f, by - 27f, bx + 4f, by - 20f)
+                    quadraticTo(bx + 1f, by - 13f, bx - 8f, by - 14f)
+                    close()
+                }
+                drawPath(leaf, Color(0xFF247B55))
+                drawLine(Color(0xFFA7E66F), Offset(bx - 7f, by - 15f), Offset(bx + 2f, by - 21f), 1.5f)
+            }
+            BirdAccessory.CREST -> {
+                val crest = Path().apply {
+                    moveTo(bx - 9f, by - 11f)
+                    lineTo(bx - 12f, by - 22f)
+                    lineTo(bx - 4f, by - 17f)
+                    lineTo(bx + 1f, by - 25f)
+                    lineTo(bx + 3f, by - 15f)
+                    lineTo(bx + 9f, by - 20f)
+                    lineTo(bx + 8f, by - 10f)
+                    close()
+                }
+                drawPath(crest, Color(0xFFFFC83D))
+                drawPath(crest, Color(0xFFF17855).copy(alpha = 0.45f))
+            }
+        }
     }
 }
 

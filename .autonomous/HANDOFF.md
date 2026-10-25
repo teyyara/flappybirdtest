@@ -1,29 +1,34 @@
 # Handoff
 
 ## Current objective
-Add selectable Chill / Classic / Wild flight modes as version 1.3. Play Console remains deferred at the user's direction; do not upload or publish.
+Finish and validate launch-menu bird character selection for Sky Hopper v1.4. Play Console remains deferred.
 
 ## Candidate
-- Branch: feature/flight-difficulty-modes
-- Candidate version: 1.3, versionCode 4, application ID com.teyyara.flappybirdtest.
-- Base commit: 0ebd112331d6c93c7399ef757ec03cde609f2820 (squash merge of v1.2 UX polish into main).
-- Open a pull request targeting main after code and docs are complete.
+- Branch: feature/bird-character-selection-final
+- Candidate version: 1.4, versionCode 5, application ID com.teyyara.flappybirdtest.
+- Base commit: 917202db9da2f0c718e47605f9bb011fb9cbf7f1 (merged v1.3).
+- This branch contains the latest character-selection code and tests; open a fresh PR targeting main to avoid inheriting the older PR's stalled emulator run.
 
-## Changes
-- GameEngine defines three difficulty presets; each controls pipe speed, gap height, gravity, flap strength, and spacing.
-- Pipes store their gap height so Canvas rendering and collision detection use identical geometry.
-- Selected mode is persisted in SharedPreferences and displayed in the main menu.
-- Mode cannot be changed during active or paused play; continue keeps score and mode.
-- JVM tests cover mode physics, locking and continue geometry; UI test covers menu choice and persistence.
-- v1.2 base previously passed 10/10 JVM tests and 7/7 emulator UI tests in candidate run https://github.com/teyyara/flappybirdtest/actions/runs/40194582794. Main-branch v1.2 run is separate and must be checked.
-- No rewarded ads, ad SDK, network services, signing secrets or Play Console operations are added.
+## Features implemented
+- Four playable birds: Sunny, Berry, Mint, and Ember, with distinct colors and signature accessories.
+- Four character preview cards at launch; selected option is highlighted and named.
+- Shared Canvas renderer is used for menu previews and gameplay.
+- Selection is saved in SharedPreferences and applied to the engine at launch; it remains fixed through pause and one-time continue.
+- All characters use identical physics and collision size.
+- Character selection tests cover valid choices, persistence, invalid preference fallback, and selection lock during play.
+- Launch-menu test asserts that the character choices, selected label, difficulty controls, sound toggle, help, and Start Flight are displayed, not merely present in the semantics tree.
 
-## Validation protocol
-Run JVM tests, lint, debug APK build and API 36 emulator UI tests on the exact PR candidate. Inspect XML reports, failures, warnings, artifact manifest and SHA-256. Merge only if all required steps pass. Inspect the subsequent main-branch workflow and download its debug APK for the user.
-Physical device testing is not complete until the user installs the new APK on their phone. Do not report emulator tests as phone tests.
+## Validation history / failure analysis
+- v1.3 main validation passed in run 40196050574.
+- Character candidate run 40199740196 passed JVM tests, lint, and debug build but failed four emulator UI assertions. The main issue was that Start Flight was too low in the launch menu and test clicks did not reach a run.
+- The final candidate moves character selection and Start Flight near the top and removes a redundant difficulty heading. The main-menu test checks visibility explicitly.
+- Run 40202325668 remained on the emulator step without publishing a result; it is not treated as a pass. The final branch has a fresh PR ref for a conclusive validation run.
+- Merge only after the fresh run's JVM tests, lint, debug build, and complete emulator suite pass.
 
 ## Toolchain and constraints
 - Android Gradle Plugin 8.13.2, Gradle 8.13, Kotlin 2.2.10, Compose BOM 2026.01.00, JDK 17.
 - Compile/target SDK 36; minimum API 24.
-- Local environment lacks Android SDK, Gradle, adb and emulator; use remote CI.
-- Release signing remains environment-only. Never commit/print keystore bytes or passwords.
+- Local environment lacks Android SDK, Gradle, adb, and emulator; remote CI is required.
+- Release signing remains environment-only. Never commit or print keystore bytes or passwords.
+- Physical-device testing remains pending until the user installs the APK and reports feedback.
+- No ad SDK, network services, or Play Console operations are included.

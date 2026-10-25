@@ -4,8 +4,9 @@ A native Android arcade game with original Canvas-drawn scenery, pipes, and bird
 
 ## Gameplay
 
-- Animated main menu with **START FLIGHT**, a **HOW TO PLAY** guide, saved sound toggle, personal-best display, and **CHILL / CLASSIC / WILD** flight modes.
+- Animated main menu with **START FLIGHT**, a **HOW TO PLAY** guide, saved sound toggle, personal-best display, **CHILL / CLASSIC / WILD** flight modes, and four selectable bird characters: Sunny, Berry, Mint, and Ember.
 - Flight mode changes pipe speed, gap width, gravity, flap strength, and spacing. The selected mode is saved locally and locked for the duration of a run, including a one-time continue.
+- Choose a bird at the launch menu. Each bird has its own color palette and signature accessory; the selected character appears in the animated menu and the live flight. Character choice is saved locally and stays fixed during a run.
 - During a flight, tap the sky to flap, use **Ⅱ** to pause, and use the speaker control to mute/unmute sound effects.
 - Android Back pauses an active flight; Back from pause or game over returns to the main menu.
 - Leaving the app or locking the phone automatically pauses an active flight. Returning never silently resumes gameplay.
