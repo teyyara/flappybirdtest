@@ -2,7 +2,8 @@ package com.teyyara.flappybirdtest
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.lifecycle.Lifecycle
@@ -39,14 +40,14 @@ class GameFlowTest {
 
         composeRule.onNodeWithTag("birdCharacterBERRY").performClick()
         composeRule.mainClock.advanceTimeByFrame()
-        composeRule.onNodeWithTag("selectedBirdLabel").assertTextContains("BERRY")
+        composeRule.onNodeWithTag("selectedBirdLabel").assertTextEquals("SELECTED: BERRY")
         composeRule.runOnIdle {
             assertEquals("BERRY", preferences.getString("bird_character", ""))
         }
 
         composeRule.onNodeWithTag("birdCharacterMINT").performClick()
         composeRule.mainClock.advanceTimeByFrame()
-        composeRule.onNodeWithTag("selectedBirdLabel").assertTextContains("MINT")
+        composeRule.onNodeWithTag("selectedBirdLabel").assertTextEquals("SELECTED: MINT")
         composeRule.runOnIdle {
             assertEquals("MINT", preferences.getString("bird_character", ""))
         }
@@ -107,8 +108,9 @@ class GameFlowTest {
     fun howToPlayOverlayCanBeOpenedAndDismissed() {
         composeRule.mainClock.autoAdvance = false
 
-        composeRule.onNodeWithTag("howToPlayButton").performClick()
+        composeRule.onNodeWithTag("howToPlayButton").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag("howToPlayTitle").assertExists()
         composeRule.onNodeWithTag("howToPlayCloseButton").assertExists()
 
         composeRule.onNodeWithTag("howToPlayCloseButton").performClick()
