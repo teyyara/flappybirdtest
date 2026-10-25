@@ -4,7 +4,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.lifecycle.Lifecycle
 import org.junit.Assert.assertEquals
@@ -38,14 +37,14 @@ class GameFlowTest {
         composeRule.mainClock.autoAdvance = false
         val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
 
-        composeRule.onNodeWithTag("birdCharacterBERRY").performScrollTo().performClick()
+        composeRule.onNodeWithTag("birdCharacterBERRY").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("selectedBirdLabel").assertTextEquals("SELECTED: BERRY")
         composeRule.runOnIdle {
             assertEquals("BERRY", preferences.getString("bird_character", ""))
         }
 
-        composeRule.onNodeWithTag("birdCharacterMINT").performScrollTo().performClick()
+        composeRule.onNodeWithTag("birdCharacterMINT").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("selectedBirdLabel").assertTextEquals("SELECTED: MINT")
         composeRule.runOnIdle {
@@ -53,7 +52,7 @@ class GameFlowTest {
         }
 
         // Restore the classic gold bird so other tests start from the default.
-        composeRule.onNodeWithTag("birdCharacterSUNNY").performScrollTo().performClick()
+        composeRule.onNodeWithTag("birdCharacterSUNNY").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals("SUNNY", preferences.getString("bird_character", ""))
@@ -65,20 +64,20 @@ class GameFlowTest {
         composeRule.mainClock.autoAdvance = false
         val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
 
-        composeRule.onNodeWithTag("difficultyWILD").performScrollTo().performClick()
+        composeRule.onNodeWithTag("difficultyWILD").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals("WILD", preferences.getString("flight_difficulty", ""))
         }
 
-        composeRule.onNodeWithTag("difficultyCHILL").performScrollTo().performClick()
+        composeRule.onNodeWithTag("difficultyCHILL").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals("CHILL", preferences.getString("flight_difficulty", ""))
         }
 
         // Restore Classic so later flow tests have predictable, balanced physics.
-        composeRule.onNodeWithTag("difficultyCLASSIC").performScrollTo().performClick()
+        composeRule.onNodeWithTag("difficultyCLASSIC").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals("CLASSIC", preferences.getString("flight_difficulty", ""))
@@ -91,13 +90,13 @@ class GameFlowTest {
         val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
         val originalValue = preferences.getBoolean("sound_enabled", true)
 
-        composeRule.onNodeWithTag("soundToggle").performScrollTo().performClick()
+        composeRule.onNodeWithTag("soundToggle").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals(!originalValue, preferences.getBoolean("sound_enabled", true))
         }
 
-        composeRule.onNodeWithTag("soundToggle").performScrollTo().performClick()
+        composeRule.onNodeWithTag("soundToggle").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals(originalValue, preferences.getBoolean("sound_enabled", true))
@@ -108,7 +107,7 @@ class GameFlowTest {
     fun howToPlayOverlayCanBeOpenedAndDismissed() {
         composeRule.mainClock.autoAdvance = false
 
-        composeRule.onNodeWithTag("howToPlayButton").performScrollTo().assertExists().performClick()
+        composeRule.onNodeWithTag("howToPlayButton").assertExists().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("howToPlayTitle").assertExists()
         composeRule.onNodeWithTag("howToPlayCloseButton").assertExists()
@@ -122,7 +121,7 @@ class GameFlowTest {
     fun systemBackPausesFlightAndReturnsToMenuFromPause() {
         composeRule.mainClock.autoAdvance = false
 
-        composeRule.onNodeWithTag("playButton").performScrollTo().performClick()
+        composeRule.onNodeWithTag("playButton").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.activityRule.scenario.onActivity { activity ->
             activity.onBackPressedDispatcher.onBackPressed()
@@ -142,7 +141,7 @@ class GameFlowTest {
     fun backgroundingAppPausesActiveFlight() {
         composeRule.mainClock.autoAdvance = false
 
-        composeRule.onNodeWithTag("playButton").performScrollTo().performClick()
+        composeRule.onNodeWithTag("playButton").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.activityRule.scenario.moveToState(Lifecycle.State.STARTED)
         composeRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
@@ -156,7 +155,7 @@ class GameFlowTest {
     fun playerCanStartPauseAndResumeAFlight() {
         composeRule.mainClock.autoAdvance = false
 
-        composeRule.onNodeWithTag("playButton").performScrollTo().performClick()
+        composeRule.onNodeWithTag("playButton").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("scoreHud").assertExists()
         composeRule.onNodeWithTag("readyTitle").assertDoesNotExist()
@@ -175,7 +174,7 @@ class GameFlowTest {
     fun playerCanContinueOnceAfterGameOver() {
         composeRule.mainClock.autoAdvance = false
 
-        composeRule.onNodeWithTag("playButton").performScrollTo().performClick()
+        composeRule.onNodeWithTag("playButton").performClick()
         composeRule.mainClock.advanceTimeBy(1800L)
 
         composeRule.onNodeWithTag("continueButton").assertExists()
