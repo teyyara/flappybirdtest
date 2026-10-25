@@ -1,20 +1,21 @@
 # Plan
 
-## Current upgrade: menu and run controls
+## Current upgrade: lifecycle safety, guidance, and polish (version 1.2)
 
-1. Add a main menu with an explicit Start Flight button and personal-best display. (Implemented and emulator-tested.)
-2. Add a persistent sound-effects toggle on the menu and in-flight/overlay controls. (Implemented; emulator preference test passes.)
-3. Add pause/resume, restart, and return-to-main-menu flows. (Implemented; JVM and emulator pause/resume tests pass.)
-4. Add one continue action after game over per run, preserving score and giving a fresh obstacle runway. Keep it free until a rewarded-ad integration is explicitly planned and tested. (Implemented; JVM and emulator flow tests pass; no ad SDK.)
-5. Fix the instrumentation assertion imports after a failed candidate run, then re-run CI. (Complete; latest candidate CI passed.)
-6. Refresh README and persistent project memory/evidence to reflect the actual code and toolchain. (In progress.)
-7. Validate the documentation checkpoint, merge PR #1 only after required checks are green, then inspect main-branch CI and retrieve the updated debug APK for device testing. (Pending.)
-8. Continue UX polish based on a bounded new unit: lifecycle auto-pause, accessibility/device layout review, and improved original sound/animation polish. (Pending; keep changes test-backed.)
-9. Play Console/store submission is explicitly deferred by the user. Do not spend this session on store onboarding, upload, or publication.
+1. Preserve menu/start, saved mute, pause/resume, restart, return-to-menu, and one free continue after game over. Completed in version 1.1 and previously validated.
+2. Give the main menu a subtle animated sky and bird idle motion without advancing gameplay physics. Implemented; CI pending.
+3. Add a first-run-friendly How to Play guide with clear tap, obstacle, pause, and continue instructions. Implemented; CI pending.
+4. Pause active gameplay on Android lifecycle pause/background; never silently resume a run when the user returns. Implemented; emulator test added; CI pending.
+5. Make Android Back follow game navigation: pause active play; from pause/game over return to the main menu; close the help overlay first. Implemented; emulator test added; CI pending.
+6. Make long menu and overlay content scroll on smaller displays. Implemented; device layout review via emulator pending.
+7. Re-run JVM tests, lint, debug build, and Android emulator tests. Fix failures before merging. Pending CI.
+8. Merge only after the candidate checks are green, inspect main-branch validation, and retrieve the version 1.2 debug APK for real-device testing. Pending.
+9. Continue with a new bounded gameplay/content milestone after user tests this build. Play Console remains deferred.
 
 ## Acceptance for this checkpoint
 
-- JVM unit tests and lint complete successfully.
-- Emulator UI flow covers main menu controls, mute persistence, play/pause/resume, and the one-time continue path.
-- CI reports the correct candidate identity and produces retrievable APK/test evidence.
-- Repository memory accurately records what passed, known warnings, and remaining work.
+- Existing ten JVM tests still pass.
+- Emulator tests cover the menu, persistent mute, pause/resume, one-time continue, How to Play open/close, system Back navigation, and lifecycle auto-pause.
+- testDebugUnitTest, lintDebug, assembleDebug, and connectedDebugAndroidTest succeed.
+- Release-signing secrets are never needed in ordinary validation; no ads, network service, or Play Console work is introduced.
+- Candidate evidence and repository memory accurately distinguish implemented features from CI/device-verified behavior.
