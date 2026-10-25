@@ -38,6 +38,7 @@ fun GameCanvas(
     onFlap: () -> Unit
 ) {
     var frameVersion by remember { mutableIntStateOf(0) }
+    var ambientSeconds by remember { mutableFloatStateOf(0f) }
     var viewportWidth by remember { mutableFloatStateOf(360f) }
     val currentViewportWidth by rememberUpdatedState(viewportWidth)
     val currentStatusCallback by rememberUpdatedState(onStatusChanged)
@@ -45,21 +46,37 @@ fun GameCanvas(
     val currentFlapCallback by rememberUpdatedState(onFlap)
 
     LaunchedEffect(engine, status) {
-        if (status != GameStatus.PLAYING) return@LaunchedEffect
+        if (status == GameStatus.PAUSED || status == GameStatus.GAME_OVER) return@LaunchedEffect
+
         var previousFrameNanos = 0L
         var lastReportedScore = engine.score
-        while (isActive && engine.status == GameStatus.PLAYING) {
+        while (isActive) {
             val now = androidx.compose.runtime.withFrameNanos { it }
-            val delta = if (previousFrameNanos == 0L) 0f else
+            val rawDelta = if (previousFrameNanos == 0L) 0f else
                 (now - previousFrameNanos) / 1_000_000_000f
             previousFrameNanos = now
-            engine.update(delta, currentViewportWidth)
-            frameVersion += 1
-            if (engine.score != lastReportedScore) {
-                lastReportedScore = engine.score
-                currentScoreCallback(engine.score)
+            val delta = rawDelta.coerceIn(0f, GameEngine.MAX_FRAME_SECONDS)
+
+            if (status == GameStatus.PLAYING) {
+                if (engine.status != GameStatus.PLAYING) {
+                    currentStatusCallback(engine.status)
+                    return@LaunchedEffect
+                }
+                engine.update(delta, currentViewportWidth)
+                frameVersion += 1
+                if (engine.score != lastReportedScore) {
+                    lastReportedScore = engine.score
+                    currentScoreCallback(engine.score)
+                }
+                if (engine.status != GameStatus.PLAYING) {
+                    currentStatusCallback(engine.status)
+                    return@LaunchedEffect
+                }
+            } else if (status == GameStatus.READY) {
+                // Give the menu a living backdrop without advancing gameplay physics.
+                ambientSeconds += delta
+                frameVersion += 1
             }
-            if (engine.status != GameStatus.PLAYING) currentStatusCallback(engine.status)
         }
     }
 
@@ -86,12 +103,12 @@ fun GameCanvas(
         val scaleFactor = size.height / GameEngine.VIRTUAL_HEIGHT
         val logicalWidth = size.width / scaleFactor
         withTransform({ scale(scaleFactor, scaleFactor, pivot = Offset.Zero) }) {
-            drawGameWorld(engine, logicalWidth)
+            drawGameWorld(engine, logicalWidth, ambientSeconds)
         }
     }
 }
 
-private fun DrawScope.drawGameWorld(engine: GameEngine, width: Float) {
+private fun DrawScope.drawGameWorld(engine: GameEngine, width: Float, ambientSeconds: Float) {
     val height = GameEngine.VIRTUAL_HEIGHT
     drawRect(
         brush = Brush.verticalGradient(
@@ -103,7 +120,8 @@ private fun DrawScope.drawGameWorld(engine: GameEngine, width: Float) {
     drawCircle(Color(0xFFFFF0AE), radius = 35f, center = Offset(width * 0.79f, 104f))
     drawCircle(Color(0xFFFFF8D2), radius = 27f, center = Offset(width * 0.79f, 104f))
 
-    val cloudTravel = engine.elapsedSeconds * 10f
+    val sceneTime = if (engine.status == GameStatus.READY) ambientSeconds else engine.elapsedSeconds
+    val cloudTravel = sceneTime * 10f
     drawCloud(wrap(-32f - cloudTravel, width + 100f) - 20f, 148f, 0.95f)
     drawCloud(wrap(width * 0.58f - cloudTravel * 0.72f, width + 120f), 225f, 0.68f)
     drawCloud(wrap(width * 0.29f - cloudTravel * 0.5f, width + 140f), 92f, 0.48f)
@@ -150,11 +168,13 @@ private fun DrawScope.drawGameWorld(engine: GameEngine, width: Float) {
         stripeX += 42f
     }
 
-    val rotation = if (engine.status == GameStatus.READY) sin(engine.elapsedSeconds * 2f) * 4f
+    val idleBob = if (engine.status == GameStatus.READY) sin(ambientSeconds * 2.4f) * 7f else 0f
+    val birdY = engine.birdY + idleBob
+    val rotation = if (engine.status == GameStatus.READY) sin(ambientSeconds * 2f) * 4f
         else (engine.birdVelocity / 9f).coerceIn(-24f, 75f)
-    rotate(rotation, pivot = Offset(engine.birdX, engine.birdY)) {
+    rotate(rotation, pivot = Offset(engine.birdX, birdY)) {
         val bx = engine.birdX
-        val by = engine.birdY
+        val by = birdY
         val tail = Path().apply {
             moveTo(bx - 12f, by + 1f)
             lineTo(bx - 25f, by - 5f)
