@@ -1,6 +1,7 @@
 package com.teyyara.flappybirdtest
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.isActive
@@ -32,13 +34,15 @@ fun GameCanvas(
     modifier: Modifier = Modifier,
     onViewportWidthChanged: (Float) -> Unit,
     onStatusChanged: (GameStatus) -> Unit,
-    onScoreChanged: (Int) -> Unit
+    onScoreChanged: (Int) -> Unit,
+    onFlap: () -> Unit
 ) {
     var frameVersion by remember { mutableIntStateOf(0) }
     var viewportWidth by remember { mutableFloatStateOf(360f) }
     val currentViewportWidth by rememberUpdatedState(viewportWidth)
     val currentStatusCallback by rememberUpdatedState(onStatusChanged)
     val currentScoreCallback by rememberUpdatedState(onScoreChanged)
+    val currentFlapCallback by rememberUpdatedState(onFlap)
 
     LaunchedEffect(engine, status) {
         if (status != GameStatus.PLAYING) return@LaunchedEffect
@@ -60,16 +64,22 @@ fun GameCanvas(
     }
 
     Canvas(
-        modifier = modifier.onSizeChanged { size: IntSize ->
-            if (size.height > 0) {
-                val scaleFactor = size.height / GameEngine.VIRTUAL_HEIGHT
-                val logicalWidth = size.width / scaleFactor
-                if (logicalWidth > 0f && logicalWidth != viewportWidth) {
-                    viewportWidth = logicalWidth
-                    onViewportWidthChanged(logicalWidth)
+        modifier = modifier
+            .pointerInput(status) {
+                detectTapGestures {
+                    if (status == GameStatus.PLAYING) currentFlapCallback()
                 }
             }
-        }
+            .onSizeChanged { size: IntSize ->
+                if (size.height > 0) {
+                    val scaleFactor = size.height / GameEngine.VIRTUAL_HEIGHT
+                    val logicalWidth = size.width / scaleFactor
+                    if (logicalWidth > 0f && logicalWidth != viewportWidth) {
+                        viewportWidth = logicalWidth
+                        onViewportWidthChanged(logicalWidth)
+                    }
+                }
+            }
     ) {
         val animationFrame = frameVersion
         if (animationFrame < 0) return@Canvas
