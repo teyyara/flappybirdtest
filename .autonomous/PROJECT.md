@@ -8,7 +8,7 @@
 - Main menu: animated sky/bird, four selectable character previews, Start Flight, saved mute toggle, personal best, How to Play, and Chill / Classic / Wild difficulty.
 - Characters: Sunny (gold, classic), Berry (purple with sparkle), Mint (teal with leaf), and Ember (coral with crest). They are cosmetics; all use the same physics and hitbox.
 - Character choice is persisted in private SharedPreferences, reflected in the selected label and menu preview, used by the gameplay renderer, and retained through pause/restart/game-over continue flows.
-- Candidate version: 1.4 (versionCode 5) on feature/bird-character-selection-final.
+- Current validated app/source candidate: version 1.4 (versionCode 5) on main commit 31f13853f4b91ebfb770f16b97b4b72a2b4c37b6; post-merge validation run 40203844680 passed.
 - External services: none. No network permission, analytics, account, payments, or ad SDK.
 - Distribution: no store upload/publication authorized; the user explicitly deferred Play Console work.
 - Build: ./gradlew testDebugUnitTest lintDebug assembleDebug.
