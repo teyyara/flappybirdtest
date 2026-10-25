@@ -311,9 +311,16 @@ fun GameScreen() {
 
         if (showHowToPlay) {
             OverlayCard {
-                Text("HOW TO PLAY", fontSize = 25.sp, letterSpacing = 0.6.sp, fontWeight = FontWeight.Black, color = Color(0xFF19364A))
+                Text("HOW TO PLAY", modifier = Modifier.testTag("howToPlayTitle"), fontSize = 25.sp, letterSpacing = 0.6.sp, fontWeight = FontWeight.Black, color = Color(0xFF19364A))
                 Text("A tiny bird. A big sky. One more try.", modifier = Modifier.padding(top = 5.dp), fontSize = 12.sp, color = Color(0xFF5C7A83), textAlign = TextAlign.Center)
-                Spacer(Modifier.height(19.dp))
+                Spacer(Modifier.height(10.dp))
+                ActionButton(
+                    label = "CLOSE GUIDE",
+                    testTag = "howToPlayCloseButton",
+                    onClick = { showHowToPlay = false },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(Modifier.height(10.dp))
                 InstructionRow("01", "TAP TO FLAP", "Tap anywhere in the sky to lift your bird.")
                 Spacer(Modifier.height(13.dp))
                 InstructionRow("02", "THREAD THE PIPES", "Fly through each gap. Every pipe pair adds a point.")
@@ -321,13 +328,7 @@ fun GameScreen() {
                 InstructionRow("03", "PAUSE WHENEVER", "Use the pause button or your phone's Back action.")
                 Spacer(Modifier.height(13.dp))
                 InstructionRow("04", "ONE EXTRA CHANCE", "After a crash, continue once to keep your score.")
-                Spacer(Modifier.height(21.dp))
-                ActionButton(
-                    label = "GOT IT, LET'S FLY",
-                    testTag = "howToPlayCloseButton",
-                    onClick = { showHowToPlay = false },
-                    modifier = Modifier.fillMaxWidth()
-                )
+
             }
         }
 
