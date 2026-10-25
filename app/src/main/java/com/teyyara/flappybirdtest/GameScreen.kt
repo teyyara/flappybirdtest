@@ -270,33 +270,15 @@ fun GameScreen() {
                             color = Color(0xFF2D6E82)
                         )
 
-                        Spacer(Modifier.height(15.dp))
-                        Surface(
-                            color = Color(0xFFF0FAF8),
-                            shape = RoundedCornerShape(18.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    "CHOOSE YOUR FLIGHT",
-                                    fontSize = 10.sp,
-                                    letterSpacing = 1.1.sp,
-                                    fontWeight = FontWeight.Black,
-                                    color = Color(0xFF4A8A91)
-                                )
-                                Spacer(Modifier.height(8.dp))
-                                DifficultySelector(
-                                    selected = selectedDifficulty,
-                                    onSelect = { selection ->
-                                        selectedDifficulty = selection
-                                        engine.selectDifficulty(selection)
-                                        preferences.edit().putString("flight_difficulty", selection.name).apply()
-                                    }
-                                )
+                        Spacer(Modifier.height(12.dp))
+                        DifficultySelector(
+                            selected = selectedDifficulty,
+                            onSelect = { selection ->
+                                selectedDifficulty = selection
+                                engine.selectDifficulty(selection)
+                                preferences.edit().putString("flight_difficulty", selection.name).apply()
                             }
-                        }
+                        )
                         Spacer(Modifier.height(10.dp))
                         SoundToggleButton(
                             enabled = soundEnabled,
