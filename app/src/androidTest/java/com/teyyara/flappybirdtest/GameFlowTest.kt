@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.lifecycle.Lifecycle
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -40,6 +41,53 @@ class GameFlowTest {
         composeRule.runOnIdle {
             assertEquals(originalValue, preferences.getBoolean("sound_enabled", true))
         }
+    }
+
+    @Test
+    fun howToPlayOverlayCanBeOpenedAndDismissed() {
+        composeRule.mainClock.autoAdvance = false
+
+        composeRule.onNodeWithTag("howToPlayButton").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag("howToPlayCloseButton").assertExists()
+
+        composeRule.onNodeWithTag("howToPlayCloseButton").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag("playButton").assertExists()
+    }
+
+    @Test
+    fun systemBackPausesFlightAndReturnsToMenuFromPause() {
+        composeRule.mainClock.autoAdvance = false
+
+        composeRule.onNodeWithTag("playButton").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.activityRule.scenario.onActivity { activity ->
+            activity.onBackPressedDispatcher.onBackPressed()
+        }
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag("resumeButton").assertExists()
+
+        composeRule.activityRule.scenario.onActivity { activity ->
+            activity.onBackPressedDispatcher.onBackPressed()
+        }
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag("playButton").assertExists()
+        composeRule.onNodeWithTag("resumeButton").assertDoesNotExist()
+    }
+
+    @Test
+    fun backgroundingAppPausesActiveFlight() {
+        composeRule.mainClock.autoAdvance = false
+
+        composeRule.onNodeWithTag("playButton").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.STARTED)
+        composeRule.activityRule.scenario.moveToState(Lifecycle.State.RESUMED)
+        composeRule.mainClock.advanceTimeByFrame()
+
+        composeRule.onNodeWithTag("resumeButton").assertExists()
+        composeRule.onNodeWithTag("scoreHud").assertDoesNotExist()
     }
 
     @Test

@@ -4,11 +4,13 @@ A native Android arcade game with original Canvas-drawn scenery, pipes, and bird
 
 ## Gameplay
 
-- Main menu: tap **START FLIGHT** to begin.
-- During a flight, tap the game area to flap, use **Ⅱ** to pause, and use the speaker control to mute/unmute sound effects.
+- Animated main menu with **START FLIGHT**, a **HOW TO PLAY** guide, sound toggle, and personal-best display.
+- During a flight, tap the sky to flap, use **Ⅱ** to pause, and use the speaker control to mute/unmute sound effects.
+- Android Back pauses an active flight; Back from pause or game over returns to the main menu.
+- Leaving the app or locking the phone automatically pauses an active flight. Returning never silently resumes gameplay.
 - Pause: resume the current flight, restart the run, return to the main menu, or toggle sound.
 - Game over: review score and personal best, **CONTINUE RUN** once in the current run (free placeholder; rewarded ads are not integrated yet), **FLY AGAIN**, or return to the menu.
-- Sound preference and personal best are saved locally on the device.
+- Long menu/overlay content can scroll on smaller screens. Sound preference and personal best are saved locally on the device.
 
 ## Stack and privacy
 

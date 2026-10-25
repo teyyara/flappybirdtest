@@ -3,6 +3,7 @@ package com.teyyara.flappybirdtest
 import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -13,10 +14,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -33,6 +37,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -48,6 +56,8 @@ fun GameScreen() {
         context.getSharedPreferences("sky_hopper_preferences", Context.MODE_PRIVATE)
     }
     val engine = remember { GameEngine() }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val toneGenerator = remember(context) {
         ToneGenerator(AudioManager.STREAM_MUSIC, 35)
     }
@@ -60,6 +70,7 @@ fun GameScreen() {
     var bestScore by remember { mutableIntStateOf(preferences.getInt("best_score", 0)) }
     var soundEnabled by remember { mutableStateOf(preferences.getBoolean("sound_enabled", true)) }
     var hasUsedContinue by remember { mutableStateOf(false) }
+    var showHowToPlay by remember { mutableStateOf(false) }
     var worldWidth by remember { androidx.compose.runtime.mutableFloatStateOf(360f) }
 
     val playSound: (Int, Int) -> Unit = { tone, durationMillis ->
@@ -83,6 +94,34 @@ fun GameScreen() {
         soundEnabled = nextSoundState
         preferences.edit().putBoolean("sound_enabled", nextSoundState).apply()
         if (nextSoundState) toneGenerator.startTone(ToneGenerator.TONE_PROP_ACK, 60)
+    }
+
+    // Never let a flight keep advancing underneath another app or a locked screen.
+    DisposableEffect(lifecycleOwner, engine) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE && engine.status == GameStatus.PLAYING) {
+                engine.pauseGame()
+                status = GameStatus.PAUSED
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+
+    // Android back follows the same navigation rules as the visible controls.
+    BackHandler(enabled = showHowToPlay || status != GameStatus.READY) {
+        if (showHowToPlay) {
+            showHowToPlay = false
+        } else {
+            when (status) {
+                GameStatus.PLAYING -> {
+                    engine.pauseGame()
+                    status = GameStatus.PAUSED
+                }
+                GameStatus.PAUSED, GameStatus.GAME_OVER -> returnToMenu()
+                GameStatus.READY -> Unit
+            }
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -156,7 +195,8 @@ fun GameScreen() {
 
         if (status == GameStatus.READY) {
             Column(
-                modifier = Modifier.align(Alignment.Center).offset(y = (-8).dp).fillMaxWidth().padding(horizontal = 28.dp),
+                modifier = Modifier.align(Alignment.Center).offset(y = (-8).dp).fillMaxWidth()
+                    .heightIn(max = screenHeight * 0.88f).verticalScroll(rememberScrollState()).padding(horizontal = 28.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -214,6 +254,14 @@ fun GameScreen() {
                             onToggle = toggleSound,
                             modifier = Modifier.fillMaxWidth()
                         )
+                        Spacer(Modifier.height(9.dp))
+                        ActionButton(
+                            label = "HOW TO PLAY",
+                            testTag = "howToPlayButton",
+                            onClick = { showHowToPlay = true },
+                            primary = false,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                         Text(
                             "PERSONAL BEST  $bestScore",
                             modifier = Modifier.padding(top = 16.dp),
@@ -224,6 +272,28 @@ fun GameScreen() {
                         )
                     }
                 }
+            }
+        }
+
+        if (showHowToPlay) {
+            OverlayCard {
+                Text("HOW TO PLAY", fontSize = 25.sp, letterSpacing = 0.6.sp, fontWeight = FontWeight.Black, color = Color(0xFF19364A))
+                Text("A tiny bird. A big sky. One more try.", modifier = Modifier.padding(top = 5.dp), fontSize = 12.sp, color = Color(0xFF5C7A83), textAlign = TextAlign.Center)
+                Spacer(Modifier.height(19.dp))
+                InstructionRow("01", "TAP TO FLAP", "Tap anywhere in the sky to lift your bird.")
+                Spacer(Modifier.height(13.dp))
+                InstructionRow("02", "THREAD THE PIPES", "Fly through each gap. Every pipe pair adds a point.")
+                Spacer(Modifier.height(13.dp))
+                InstructionRow("03", "PAUSE WHENEVER", "Use the pause button or your phone's Back action.")
+                Spacer(Modifier.height(13.dp))
+                InstructionRow("04", "ONE EXTRA CHANCE", "After a crash, continue once to keep your score.")
+                Spacer(Modifier.height(21.dp))
+                ActionButton(
+                    label = "GOT IT, LET'S FLY",
+                    testTag = "howToPlayCloseButton",
+                    onClick = { showHowToPlay = false },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
 
@@ -347,13 +417,14 @@ fun GameScreen() {
 @Composable
 private fun BoxScope.OverlayCard(content: @Composable () -> Unit) {
     Surface(
-        modifier = Modifier.align(Alignment.Center).fillMaxWidth(0.86f),
+        modifier = Modifier.align(Alignment.Center).fillMaxWidth(0.86f)
+            .heightIn(max = (LocalConfiguration.current.screenHeightDp * 0.84f).dp),
         color = Color(0xFFFDF9EF),
         shape = RoundedCornerShape(28.dp),
         shadowElevation = 16.dp
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 23.dp, vertical = 24.dp),
+            modifier = Modifier.padding(horizontal = 23.dp, vertical = 24.dp).verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             content()
@@ -414,6 +485,29 @@ private fun ActionButton(
         )
     ) {
         Text(label, fontSize = 13.sp, letterSpacing = 1.2.sp, fontWeight = FontWeight.Black)
+    }
+}
+
+@Composable
+private fun InstructionRow(number: String, title: String, description: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Surface(color = Color(0xFFFFE29B), shape = RoundedCornerShape(12.dp)) {
+            Text(
+                number,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Black,
+                color = Color(0xFF19364A)
+            )
+        }
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, fontSize = 11.sp, letterSpacing = 0.8.sp, fontWeight = FontWeight.Black, color = Color(0xFF19364A))
+            Text(description, modifier = Modifier.padding(top = 3.dp), fontSize = 12.sp, color = Color(0xFF5C7A83), lineHeight = 16.sp)
+        }
     }
 }
 
