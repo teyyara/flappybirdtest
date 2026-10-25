@@ -1,11 +1,14 @@
 # Project: Sky Hopper
 
-- Purpose: an offline-first, portrait Android arcade game based on one-tap flap-and-avoid mechanics.
-- Package/application ID: com.teyyara.flappybirdtest.
-- Stack: Kotlin, Jetpack Compose, Canvas; Android compile SDK 37, target SDK 36; minimum API 24.
-- Build toolchain: Android Gradle Plugin 9.1.1, Gradle 9.3.1, JDK 17 and the AGP built-in Kotlin support. The Compose compiler plugin uses Kotlin 2.2.10.
-- Architecture: GameEngine contains deterministic frame-step physics, pipe generation, score progression, and collision checks. GameCanvas paints original vector-like art. GameScreen owns Compose overlays and persists the best score with private SharedPreferences.
-- External services: none. No network permissions, analytics, login, payments, or third-party runtime service.
-- Distribution: debug APK only until release gates in STRATEGY.md have been met and the user explicitly accepts a release.
-- Build: ./gradlew testDebugUnitTest lintDebug assembleDebug.
-- Runtime test: ./gradlew connectedDebugAndroidTest on an authorized Android emulator/device; the repository Actions workflow uses Android API 37.
+- Purpose: offline-first portrait Android arcade game based on one-tap flap-and-avoid mechanics.
+- Package/application ID: `com.teyyara.flappybirdtest`.
+- Stack: Kotlin, Jetpack Compose, Canvas; compile/target SDK 36; minimum API 24.
+- Build toolchain: Android Gradle Plugin 8.13.2, Gradle 8.13, Kotlin Android/Compose plugins 2.2.10, JDK 17 in CI, Compose BOM 2026.01.00.
+- Architecture: `GameEngine` owns frame-step physics, pipes, score and collisions. `GameCanvas` paints original art and advances the engine. `GameScreen` owns overlays, local best-score and sound preference persistence, and sound effects.
+- Main flows: menu/start, active flight with score HUD/mute/pause, pause/resume/restart/main menu, game-over continue (once per run, currently free)/restart/main menu.
+- External services: none. No network permission, analytics, login, payments, ad SDK or sensitive runtime permission.
+- Candidate version: 1.1 (versionCode 2) on feature branch `feature/game-menu-mute-continue`.
+- Distribution: no store upload or publication authorized; user explicitly deferred Play Console work.
+- Build: `./gradlew testDebugUnitTest lintDebug assembleDebug`.
+- Runtime tests: `./gradlew connectedDebugAndroidTest`; remote validation uses Android API 36 emulator.
+- Local execution limitation: current ChatGPT container has no Android SDK, Gradle, adb or emulator; use GitHub Actions and inspect evidence.

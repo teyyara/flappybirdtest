@@ -1,30 +1,30 @@
 # Sky Hopper
 
-A native Android arcade game inspired by one-tap flap-and-dodge gameplay. It uses original Canvas-drawn scenery, pipes, and bird art; no downloaded game art or external runtime service is required.
+A native Android arcade game with original Canvas-drawn scenery, pipes, and bird art. It uses one-touch flap-and-dodge gameplay, has no network service, and stores the personal best locally.
 
 ## Gameplay
 
-- Tap anywhere to start, then tap to flap upward.
-- Pass between moving pipe pairs to earn points.
-- A collision with a pipe, ceiling, or ground ends the round.
-- Your best score is saved locally on the device.
-- Press FLY AGAIN to restart.
+- Main menu: tap **START FLIGHT** to begin.
+- During a flight, tap the game area to flap, use **Ⅱ** to pause, and use the speaker control to mute/unmute sound effects.
+- Pause: resume the current flight, restart the run, return to the main menu, or toggle sound.
+- Game over: review score and personal best, **CONTINUE RUN** once in the current run (free placeholder; rewarded ads are not integrated yet), **FLY AGAIN**, or return to the menu.
+- Sound preference and personal best are saved locally on the device.
 
-## Stack
+## Stack and privacy
 
-- Kotlin, Android SDK 36, minimum Android API 24.
-- Jetpack Compose UI and a Canvas-rendered, portrait-mode game scene.
-- A deterministic, independently testable Kotlin physics/collision engine.
-- No network access, analytics, account, or sensitive permissions.
+- Kotlin, Jetpack Compose UI, and a Canvas-rendered portrait game scene.
+- Android Gradle Plugin 8.13.2, Gradle wrapper 8.13, Kotlin 2.2.10, JDK 17.
+- Compile/target SDK 36; minimum SDK 24.
+- No analytics, accounts, payments, network permission, ad SDK, or sensitive runtime permission.
 
 ## Build and test
 
-From a machine with JDK 17 and the Android SDK installed, run ./gradlew testDebugUnitTest, ./gradlew lintDebug, and ./gradlew assembleDebug. With an online emulator/device, run ./gradlew connectedDebugAndroidTest. On Windows use gradlew.bat. Portable environment and test scripts live in scripts/.
+From a machine with JDK 17 and the Android SDK, run `./gradlew testDebugUnitTest lintDebug assembleDebug`. With an online emulator/device, run `./gradlew connectedDebugAndroidTest`. On Windows use `gradlew.bat`. Portable environment and test scripts live in `scripts/`.
 
-The public GitHub Actions workflow builds, runs JVM tests and lint, launches an Android emulator, and runs the Compose smoke journey. Results are only considered verified after inspecting the corresponding workflow run and reports.
+Android validation workflow: [GitHub Actions](https://github.com/teyyara/flappybirdtest/actions/workflows/android-validation.yml). Check the run and reports before treating a candidate as validated.
 
-The debug APK is produced at app/build/outputs/apk/debug/app-debug.apk after a successful build. This is a development artifact, not a signed Play release.
+The debug APK is produced at `app/build/outputs/apk/debug/app-debug.apk` after a successful build. It is for development/testing, not a store release.
 
-## Google Play release
+## Distribution
 
-See docs/PLAY_RELEASE.md for upload-key setup, secure GitHub Actions secrets, signed Android App Bundle generation, artifact retrieval, and the Play Console checklist. Trigger the Android Play release bundle workflow from the Actions tab only after adding all four required repository secrets.
+Play Console work is deferred at the user's direction. Do not submit or publish anything without explicit user authorization. Release-signing setup and documentation remain in the repository for future use.

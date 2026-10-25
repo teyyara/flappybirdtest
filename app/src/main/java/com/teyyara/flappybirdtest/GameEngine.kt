@@ -2,7 +2,7 @@ package com.teyyara.flappybirdtest
 
 import kotlin.random.Random
 
-enum class GameStatus { READY, PLAYING, GAME_OVER }
+enum class GameStatus { READY, PLAYING, PAUSED, GAME_OVER }
 
 internal data class Pipe(
     var x: Float,
@@ -37,6 +37,43 @@ class GameEngine(seed: Int = 2026) {
         worldOffset = 0f
         pipes.clear()
         pipes += Pipe(worldWidth + FIRST_PIPE_OFFSET, nextGapCenter())
+    }
+
+    fun pauseGame() {
+        if (status == GameStatus.PLAYING) status = GameStatus.PAUSED
+    }
+
+    fun resumeGame() {
+        if (status == GameStatus.PAUSED) status = GameStatus.PLAYING
+    }
+
+    /** Return to the idle main menu without leaving stale run state on the game canvas. */
+    fun returnToMenu(viewportWidth: Float) {
+        worldWidth = viewportWidth.coerceAtLeast(250f)
+        status = GameStatus.READY
+        score = 0
+        birdY = VIRTUAL_HEIGHT * 0.46f
+        birdVelocity = 0f
+        elapsedSeconds = 0f
+        worldOffset = 0f
+        pipes.clear()
+    }
+
+    /**
+     * Resume after a crash while preserving the current score and run time.
+     * The bird is respawned safely and obstacles are regenerated ahead of it.
+     * The UI owns the product rule that this action may be used once per run.
+     */
+    fun continueAfterGameOver(viewportWidth: Float): Boolean {
+        if (status != GameStatus.GAME_OVER) return false
+
+        worldWidth = viewportWidth.coerceAtLeast(250f)
+        status = GameStatus.PLAYING
+        birdY = GROUND_TOP * CONTINUE_SPAWN_HEIGHT_RATIO
+        birdVelocity = FLAP_VELOCITY * CONTINUE_FLAP_STRENGTH
+        pipes.clear()
+        pipes += Pipe(worldWidth + FIRST_PIPE_OFFSET, nextGapCenter())
+        return true
     }
 
     fun flap() {
@@ -102,6 +139,8 @@ class GameEngine(seed: Int = 2026) {
         const val GRAVITY = 1450f
         const val FLAP_VELOCITY = -425f
         const val MAX_FRAME_SECONDS = 1f / 30f
+        private const val CONTINUE_SPAWN_HEIGHT_RATIO = 0.43f
+        private const val CONTINUE_FLAP_STRENGTH = 0.72f
         private const val GAP_CENTER_MIN = 175f
         private const val GAP_CENTER_RANGE = 198f
     }
