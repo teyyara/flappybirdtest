@@ -1,11 +1,10 @@
 package com.teyyara.flappybirdtest
 
-import androidx.compose.ui.test.assertDoesNotExist
-import androidx.compose.ui.test.assertExists
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,12 +15,31 @@ class GameFlowTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun mainMenuShowsStartAndPersistentSoundControl() {
+    fun mainMenuShowsStartAndSoundControls() {
         composeRule.mainClock.autoAdvance = false
 
         composeRule.onNodeWithTag("readyTitle").assertExists()
         composeRule.onNodeWithTag("playButton").assertExists()
         composeRule.onNodeWithTag("soundToggle").assertExists()
+    }
+
+    @Test
+    fun soundToggleUpdatesAndPersistsItsPreference() {
+        composeRule.mainClock.autoAdvance = false
+        val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
+        val originalValue = preferences.getBoolean("sound_enabled", true)
+
+        composeRule.onNodeWithTag("soundToggle").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.runOnIdle {
+            assertEquals(!originalValue, preferences.getBoolean("sound_enabled", true))
+        }
+
+        composeRule.onNodeWithTag("soundToggle").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.runOnIdle {
+            assertEquals(originalValue, preferences.getBoolean("sound_enabled", true))
+        }
     }
 
     @Test
@@ -34,11 +52,29 @@ class GameFlowTest {
         composeRule.onNodeWithTag("readyTitle").assertDoesNotExist()
 
         composeRule.onNodeWithTag("pauseButton").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("resumeButton").assertExists()
         composeRule.onNodeWithTag("scoreHud").assertDoesNotExist()
 
         composeRule.onNodeWithTag("resumeButton").performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("scoreHud").assertExists()
+    }
+
+    @Test
+    fun playerCanContinueOnceAfterGameOver() {
+        composeRule.mainClock.autoAdvance = false
+
+        composeRule.onNodeWithTag("playButton").performClick()
+        composeRule.mainClock.advanceTimeBy(1800L)
+
+        composeRule.onNodeWithTag("continueButton").assertExists()
+        composeRule.onNodeWithTag("continueButton").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag("scoreHud").assertExists()
+
+        composeRule.mainClock.advanceTimeBy(1800L)
+        composeRule.onNodeWithTag("continueButton").assertDoesNotExist()
+        composeRule.onNodeWithTag("flyAgainButton").assertExists()
     }
 }
