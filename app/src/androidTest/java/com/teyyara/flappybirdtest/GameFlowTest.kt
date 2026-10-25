@@ -2,6 +2,7 @@ package com.teyyara.flappybirdtest
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.lifecycle.Lifecycle
@@ -25,6 +26,37 @@ class GameFlowTest {
         composeRule.onNodeWithTag("difficultyCHILL").assertExists()
         composeRule.onNodeWithTag("difficultyCLASSIC").assertExists()
         composeRule.onNodeWithTag("difficultyWILD").assertExists()
+        composeRule.onNodeWithTag("birdCharacterSUNNY").assertExists()
+        composeRule.onNodeWithTag("birdCharacterBERRY").assertExists()
+        composeRule.onNodeWithTag("birdCharacterMINT").assertExists()
+        composeRule.onNodeWithTag("birdCharacterEMBER").assertExists()
+    }
+
+    @Test
+    fun characterSelectionPersistsAndUpdatesTheLaunchMenu() {
+        composeRule.mainClock.autoAdvance = false
+        val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
+
+        composeRule.onNodeWithTag("birdCharacterBERRY").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag("selectedBirdLabel").assertTextContains("BERRY")
+        composeRule.runOnIdle {
+            assertEquals("BERRY", preferences.getString("bird_character", ""))
+        }
+
+        composeRule.onNodeWithTag("birdCharacterMINT").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.onNodeWithTag("selectedBirdLabel").assertTextContains("MINT")
+        composeRule.runOnIdle {
+            assertEquals("MINT", preferences.getString("bird_character", ""))
+        }
+
+        // Restore the classic gold bird so other tests start from the default.
+        composeRule.onNodeWithTag("birdCharacterSUNNY").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.runOnIdle {
+            assertEquals("SUNNY", preferences.getString("bird_character", ""))
+        }
     }
 
     @Test
