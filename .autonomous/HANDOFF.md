@@ -1,23 +1,33 @@
 # Handoff
 
 ## Current objective
-Validate and prepare a signed Google Play App Bundle for the native offline Android game Sky Hopper (com.teyyara.flappybirdtest).
+Continue upgrading Sky Hopper's gameplay and UX. The current user explicitly deferred Play Console work; do not upload or publish.
+
+## Candidate
+- Branch: `feature/game-menu-mute-continue`
+- Latest implementation commit before memory refresh: `1bc4fc9322a3c350a632df5f775ed449c54fd3f7`
+- Open PR: [#1](https://github.com/teyyara/flappybirdtest/pull/1)
+- Candidate version: `1.1`, versionCode `2`, application ID `com.teyyara.flappybirdtest`.
+- Last validated synthetic PR merge commit from CI evidence: `2c7408f6e14a4942f505ec58f89df44d0135af30`.
 
 ## Current implementation
-Kotlin/Jetpack Compose/Canvas game; custom art, one-touch flapping, moving pipes, collision/scoring, restart, saved personal best, six JVM game-engine tests, Compose emulator smoke test, CI workflow, portable scripts and persistent repository strategy.
+Kotlin/Jetpack Compose/Canvas; original art, one-touch flap-and-dodge gameplay, moving pipes, collision/scoring, saved personal best, explicit main menu/start button, persistent sound effects mute toggle, in-flight pause, resume/restart/main-menu actions, and a single free continue after game over that preserves score and respawns with a new pipe runway. Rewarded ads are not wired and no ad SDK/network permission was added.
+
+## Latest validation (actual CI evidence inspected)
+Run [40192044874](https://github.com/teyyara/flappybirdtest/actions/runs/40192044874) succeeded:
+- JVM: 10 tests passed, 0 failures/errors.
+- Emulator UI: 4 tests passed, 0 failures/errors (main menu, sound preference persistence, pause/resume, one-time continue).
+- `testDebugUnitTest lintDebug assembleDebug`: success.
+- API 36 Android emulator and hosted KVM setup: success.
+- Lint: 0 errors, 11 warnings.
+- Artifact ID `12598588175`; artifact includes `app-debug.apk`, test XML/logs, lint report, candidate manifest and APK digest.
+- APK SHA-256: `2c536ec1262457b7f466f256ae83bf5ebe85b8378ea6fe36c3755e4b077c518a`.
 
 ## Toolchain and constraints
-- Android Gradle Plugin 8.13.2, Gradle wrapper 8.13, Kotlin 2.2.10, JDK 17 in CI.
-- Compile/target API 36; minimum API 24.
-- Local session has no Gradle executable, Android SDK, adb, emulator or sdkmanager; use GitHub Actions and inspect evidence.
-- Release signing reads ANDROID_KEYSTORE_PATH, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS and ANDROID_KEY_PASSWORD from the environment. Release packaging tasks fail closed if these are absent.
-- Never commit or print upload keystore bytes/passwords. User must back up their own key and configure repository Actions secrets.
-
-## Latest inspected validation
-Run 39353520915 on commit ac73c3a92cb8429d341df06c5649a36a68f0f93a passed SDK provisioning, testDebugUnitTest lintDebug assembleDebug, and artifact upload. The Compose emulator smoke test failed because the runner user could not access /dev/kvm; ADB never received a usable emulator and the test runner reported no compatible device. This is an infrastructure failure, not evidence of an app assertion failure.
-
-## Release workflow
-.github/workflows/android-release.yml is manually triggered and designed to run unit tests, lint, emulator smoke tests, build a signed .aab, verify its signature, and upload the bundle plus SHA-256 evidence. See docs/PLAY_RELEASE.md.
+- Android Gradle Plugin 8.13.2, Gradle 8.13, Kotlin plugins 2.2.10, Compose BOM 2026.01.00, JDK 17 in CI.
+- Compile/target SDK 36; minimum API 24.
+- Local agent environment has no Android SDK, Gradle, adb or emulator; use GitHub Actions and inspect artifacts.
+- Release signing remains environment-only. Never commit/print keystore bytes or passwords.
 
 ## Next action
-Inspect the CI run from the commit that adds explicit KVM permission setup. Once runtime validation passes, the user must create and back up an upload keystore, add the four documented GitHub Actions secrets, and manually run Android Play release bundle. Do not claim a Play release is ready until the signed artifact and required evidence are retrieved and inspected.
+Commit refreshed docs/memory on the feature branch and validate that exact candidate; merge PR #1 only after green checks. Then inspect the main-branch CI run and retrieve the resulting version 1.1 debug APK for user phone testing. Continue with lifecycle pause/adaptive UI/accessibility and polish as another bounded unit. Play Console remains deferred.
