@@ -9,7 +9,7 @@
 - Launch menu: animated background/bird, 2x2 character picker with live previews, Chill/Classic/Wild difficulty picker, Start Flight, persistent sound toggle, How to Play and personal best.
 - Persistence: best score, sound enabled state, selected difficulty, and selected character are stored locally in private SharedPreferences.
 - Run flow: selected character and difficulty are applied before starting; the character and physics mode stay fixed during active/paused flight and one-time continue.
-- Candidate version: 1.4 (versionCode 5) on feature/bird-character-selection.
+- Candidate version: 1.4 (versionCode 5) on feature/bird-character-selection-retry.
 - External services: none. No network permission, analytics, account, payment or ad SDK.
 - Distribution: no store upload/publication authorized; Play Console remains deferred by the user.
 - Build: ./gradlew testDebugUnitTest lintDebug assembleDebug.
