@@ -146,8 +146,8 @@ private fun DrawScope.drawGameWorld(engine: GameEngine, width: Float, ambientSec
     drawPath(nearHill, Color(0xFF87D17B))
 
     engine.pipes.forEach { pipe ->
-        val gapTop = pipe.gapCenter - GameEngine.PIPE_GAP_HEIGHT / 2f
-        val gapBottom = pipe.gapCenter + GameEngine.PIPE_GAP_HEIGHT / 2f
+        val gapTop = pipe.gapCenter - pipe.gapHeight / 2f
+        val gapBottom = pipe.gapCenter + pipe.gapHeight / 2f
         val pw = GameEngine.PIPE_WIDTH
         drawRoundRect(Color(0xFF278C52), Offset(pipe.x - 2f, -2f), Size(pw + 4f, gapTop + 2f), CornerRadius(7f))
         drawRect(Color(0xFF3EAD62), Offset(pipe.x + 5f, 0f), Size(10f, (gapTop - 2f).coerceAtLeast(0f)))
