@@ -2,11 +2,11 @@
 
 | ID | Requirement | Acceptance evidence | Risk | Status |
 |---|---|---|---|---|
-| GAME-001 | Launch menu presents Start Flight, help, mute, best score, and difficulty controls | Compose emulator UI test | R2 | v1.3 PASS; v1.4 candidate CI pending |
-| GAME-002 | Tap-to-flap, pipes, collisions, and scoring work | GameEngine JVM tests plus emulator flow | R2 | v1.3 PASS; v1.4 regression pending |
-| GAME-003 | Pause/resume, system Back, and lifecycle auto-pause behave safely | Engine tests and emulator UI coverage | R2 | v1.3 PASS; v1.4 regression pending |
-| GAME-004 | Sound mute and difficulty preferences persist locally | Compose UI tests and SharedPreferences assertions | R2 | v1.3 PASS; v1.4 regression pending |
-| GAME-005 | One-time continue preserves score and selected difficulty | Engine and emulator tests | R2 | v1.3 PASS; v1.4 regression pending |
+| GAME-001 | Launch menu presents Start Flight, help, mute, best score, and difficulty controls | Compose emulator UI test | R2 | PASS — v1.4 main run 40203844680
+| GAME-002 | Tap-to-flap, pipes, collisions, and scoring work | GameEngine JVM tests plus emulator flow | R2 | PASS — v1.4 main run 40203844680
+| GAME-003 | Pause/resume, system Back, and lifecycle auto-pause behave safely | Engine tests and emulator UI coverage | R2 | PASS — v1.4 main run 40203844680
+| GAME-004 | Sound mute and difficulty preferences persist locally | Compose UI tests and SharedPreferences assertions | R2 | PASS — v1.4 main run 40203844680
+| GAME-005 | One-time continue preserves score and selected difficulty | Engine and emulator tests | R2 | PASS — v1.4 main run 40203844680
 | GAME-006 | Chill, Classic, and Wild change physics/gap geometry without mismatch | Engine tests and shared per-pipe gap geometry | R2 | v1.3 PASS |
 | GAME-007 | Player can choose Sunny, Berry, Mint, or Ember on the launch menu | UI test asserts all four character controls are displayed | R2 | PASS — main run 40203844680 |
 | GAME-008 | Characters have distinctive palettes and signature accessories | Shared Canvas renderer plus preview Canvas | R2 | PASS — main run 40203844680 |
