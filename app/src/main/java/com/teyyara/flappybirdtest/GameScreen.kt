@@ -264,7 +264,14 @@ fun GameScreen() {
                             primary = false,
                             modifier = Modifier.fillMaxWidth()
                         )
-                        Spacer(Modifier.height(10.dp))
+                        Spacer(Modifier.height(8.dp))
+                        SoundToggleButton(
+                            enabled = soundEnabled,
+                            compact = false,
+                            onToggle = toggleSound,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(Modifier.height(12.dp))
                         CharacterSelector(
                             selected = selectedCharacter,
                             onSelect = { selection ->
@@ -287,13 +294,6 @@ fun GameScreen() {
                             label = "START FLIGHT",
                             testTag = "playButton",
                             onClick = startNewRun,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(Modifier.height(10.dp))
-                        SoundToggleButton(
-                            enabled = soundEnabled,
-                            compact = false,
-                            onToggle = toggleSound,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Text(
