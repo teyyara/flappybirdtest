@@ -38,14 +38,14 @@ class GameFlowTest {
         composeRule.mainClock.autoAdvance = false
         val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
 
-        composeRule.onNodeWithTag("birdCharacterBERRY").performClick()
+        composeRule.onNodeWithTag("birdCharacterBERRY").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("selectedBirdLabel").assertTextEquals("SELECTED: BERRY")
         composeRule.runOnIdle {
             assertEquals("BERRY", preferences.getString("bird_character", ""))
         }
 
-        composeRule.onNodeWithTag("birdCharacterMINT").performClick()
+        composeRule.onNodeWithTag("birdCharacterMINT").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("selectedBirdLabel").assertTextEquals("SELECTED: MINT")
         composeRule.runOnIdle {
@@ -53,7 +53,7 @@ class GameFlowTest {
         }
 
         // Restore the classic gold bird so other tests start from the default.
-        composeRule.onNodeWithTag("birdCharacterSUNNY").performClick()
+        composeRule.onNodeWithTag("birdCharacterSUNNY").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals("SUNNY", preferences.getString("bird_character", ""))
@@ -65,20 +65,20 @@ class GameFlowTest {
         composeRule.mainClock.autoAdvance = false
         val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
 
-        composeRule.onNodeWithTag("difficultyWILD").performClick()
+        composeRule.onNodeWithTag("difficultyWILD").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals("WILD", preferences.getString("flight_difficulty", ""))
         }
 
-        composeRule.onNodeWithTag("difficultyCHILL").performClick()
+        composeRule.onNodeWithTag("difficultyCHILL").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals("CHILL", preferences.getString("flight_difficulty", ""))
         }
 
         // Restore Classic so later flow tests have predictable, balanced physics.
-        composeRule.onNodeWithTag("difficultyCLASSIC").performClick()
+        composeRule.onNodeWithTag("difficultyCLASSIC").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals("CLASSIC", preferences.getString("flight_difficulty", ""))
@@ -91,13 +91,13 @@ class GameFlowTest {
         val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
         val originalValue = preferences.getBoolean("sound_enabled", true)
 
-        composeRule.onNodeWithTag("soundToggle").performClick()
+        composeRule.onNodeWithTag("soundToggle").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals(!originalValue, preferences.getBoolean("sound_enabled", true))
         }
 
-        composeRule.onNodeWithTag("soundToggle").performClick()
+        composeRule.onNodeWithTag("soundToggle").performScrollTo().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.runOnIdle {
             assertEquals(originalValue, preferences.getBoolean("sound_enabled", true))
@@ -108,7 +108,7 @@ class GameFlowTest {
     fun howToPlayOverlayCanBeOpenedAndDismissed() {
         composeRule.mainClock.autoAdvance = false
 
-        composeRule.onNodeWithTag("howToPlayButton").assertExists().performClick()
+        composeRule.onNodeWithTag("howToPlayButton").performScrollTo().assertExists().performClick()
         composeRule.mainClock.advanceTimeByFrame()
         composeRule.onNodeWithTag("howToPlayTitle").assertExists()
         composeRule.onNodeWithTag("howToPlayCloseButton").assertExists()
