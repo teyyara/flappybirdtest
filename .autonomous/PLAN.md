@@ -1,21 +1,19 @@
 # Plan
 
-## Current upgrade: lifecycle safety, guidance, and polish (version 1.2)
+## Current upgrade: selectable flight difficulty (version 1.3)
 
-1. Preserve menu/start, saved mute, pause/resume, restart, return-to-menu, and one free continue after game over. Completed in version 1.1 and previously validated.
-2. Give the main menu a subtle animated sky and bird idle motion without advancing gameplay physics. Implemented; CI pending.
-3. Add a first-run-friendly How to Play guide with clear tap, obstacle, pause, and continue instructions. Implemented; CI pending.
-4. Pause active gameplay on Android lifecycle pause/background; never silently resume a run when the user returns. Implemented; emulator test added; CI pending.
-5. Make Android Back follow game navigation: pause active play; from pause/game over return to the main menu; close the help overlay first. Implemented; emulator test added; CI pending.
-6. Make long menu and overlay content scroll on smaller displays. Implemented; device layout review via emulator pending.
-7. Re-run JVM tests, lint, debug build, and Android emulator tests. Fix failures before merging. Pending CI.
-8. Merge only after the candidate checks are green, inspect main-branch validation, and retrieve the version 1.2 debug APK for real-device testing. Pending.
-9. Continue with a new bounded gameplay/content milestone after user tests this build. Play Console remains deferred.
+1. Preserve the v1.2 menu, saved mute, How to Play guide, pause/resume, system Back, lifecycle auto-pause, and one free continue. These passed the candidate CI run 40194582794.
+2. Add three clear flight presets: Chill, Classic, and Wild. Each changes obstacle speed, pipe gap height, gravity, flap strength, and spacing. (Implemented; candidate validation pending.)
+3. Persist selected difficulty locally, show the active choice in the main menu, and keep a run's physics rules fixed after a flight starts. (Implemented; candidate validation pending.)
+4. Ensure the one-time continue keeps the selected mode and uses that mode's gap size. (Implemented; JVM test added; candidate validation pending.)
+5. Test all presets' game physics, menu persistence, and mode lock; run JVM tests, lint, debug build, and Android emulator UI tests. Fix any failure before merge. (Pending CI.)
+6. Merge only after candidate checks are green, then inspect the main-branch validation and retrieve a v1.3 debug APK for real-device testing. (Pending.)
+7. Continue with a distinct visual/gameplay loop after this build is verified. Play Console remains deferred.
 
 ## Acceptance for this checkpoint
 
-- Existing ten JVM tests still pass.
-- Emulator tests cover the menu, persistent mute, pause/resume, one-time continue, How to Play open/close, system Back navigation, and lifecycle auto-pause.
-- testDebugUnitTest, lintDebug, assembleDebug, and connectedDebugAndroidTest succeed.
-- Release-signing secrets are never needed in ordinary validation; no ads, network service, or Play Console work is introduced.
-- Candidate evidence and repository memory accurately distinguish implemented features from CI/device-verified behavior.
+- Chill has visibly slower pipes and wider gaps; Wild has faster pipes and narrower gaps; Classic retains the v1.2 baseline physics.
+- Mode selection persists after process/app restart and is not changeable during active or paused play.
+- Continue preserves score and current difficulty.
+- Existing v1.2 menu, mute, pause, back, lifecycle and continue flows continue passing.
+- Evidence distinguishes candidate CI from physical-device validation.

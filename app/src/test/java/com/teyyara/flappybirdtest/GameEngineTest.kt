@@ -122,6 +122,59 @@ class GameEngineTest {
     }
 
     @Test
+    fun difficultyPresetsChangePipeGapAndFlightPhysics() {
+        val chill = GameEngine(seed = 1)
+        chill.selectDifficulty(FlightDifficulty.CHILL)
+        chill.startGame(360f)
+
+        val wild = GameEngine(seed = 1)
+        wild.selectDifficulty(FlightDifficulty.WILD)
+        wild.startGame(360f)
+
+        assertEquals(FlightDifficulty.CHILL, chill.difficulty)
+        assertEquals(FlightDifficulty.WILD, wild.difficulty)
+        assertEquals(196f, chill.pipes.single().gapHeight, 0f)
+        assertEquals(144f, wild.pipes.single().gapHeight, 0f)
+        assertEquals(FlightDifficulty.CHILL.flapVelocity, chill.birdVelocity, 0f)
+        assertEquals(FlightDifficulty.WILD.flapVelocity, wild.birdVelocity, 0f)
+        assertTrue(FlightDifficulty.CHILL.pipeSpeed < FlightDifficulty.CLASSIC.pipeSpeed)
+        assertTrue(FlightDifficulty.WILD.pipeSpeed > FlightDifficulty.CLASSIC.pipeSpeed)
+        assertTrue(FlightDifficulty.WILD.pipeGapHeight < FlightDifficulty.CLASSIC.pipeGapHeight)
+        assertTrue(chill.pipes.single().gapCenter - chill.pipes.single().gapHeight / 2f > 0f)
+        assertTrue(wild.pipes.single().gapCenter + wild.pipes.single().gapHeight / 2f < GameEngine.GROUND_TOP)
+    }
+
+    @Test
+    fun selectedDifficultyCannotChangeDuringActiveOrPausedFlight() {
+        val engine = GameEngine(seed = 1)
+        engine.startGame(360f)
+        engine.selectDifficulty(FlightDifficulty.WILD)
+        assertEquals(FlightDifficulty.CLASSIC, engine.difficulty)
+
+        engine.pauseGame()
+        engine.selectDifficulty(FlightDifficulty.CHILL)
+        assertEquals(FlightDifficulty.CLASSIC, engine.difficulty)
+
+        engine.returnToMenu(360f)
+        engine.selectDifficulty(FlightDifficulty.CHILL)
+        assertEquals(FlightDifficulty.CHILL, engine.difficulty)
+    }
+
+    @Test
+    fun continuingAfterCrashKeepsSelectedDifficulty() {
+        val engine = GameEngine(seed = 1)
+        engine.selectDifficulty(FlightDifficulty.WILD)
+        engine.startGame(360f)
+        engine.birdY = GameEngine.GROUND_TOP
+        engine.update(1f / 60f, 360f)
+        assertEquals(GameStatus.GAME_OVER, engine.status)
+
+        assertTrue(engine.continueAfterGameOver(360f))
+        assertEquals(FlightDifficulty.WILD, engine.difficulty)
+        assertEquals(FlightDifficulty.WILD.pipeGapHeight, engine.pipes.single().gapHeight, 0f)
+    }
+
+    @Test
     fun returningToMenuClearsThePreviousRun() {
         val engine = GameEngine(seed = 1)
         engine.startGame(360f)

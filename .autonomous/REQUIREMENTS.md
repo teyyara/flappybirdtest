@@ -2,21 +2,18 @@
 
 | ID | Requirement | Acceptance evidence | Risk | Status |
 |---|---|---|---|---|
-| GAME-001 | Native portrait app opens to a usable main menu | Emulator UI test verifies title/start/sound controls | R2 | PASS on previous version 1.1 CI |
-| GAME-002 | Start flight, tap-to-flap, moving pipes and score HUD | GameEngine tests plus emulator start flow | R2 | PARTIAL; game flow tested, visual gameplay needs real-device review |
-| GAME-003 | Ceiling, ground and pipe collisions end the round | Deterministic JVM tests | R2 | PASS on previous version 1.1 CI |
-| GAME-004 | Each pipe pass scores exactly once | Deterministic JVM test | R2 | PASS on previous version 1.1 CI |
-| GAME-005 | Restart creates a fresh round and clears current score | JVM restart test; UI exposes restart actions | R2 | ENGINE PASS; continue to retain existing UI coverage |
-| GAME-006 | Personal best is persisted locally | Code inspection; best score writes to private SharedPreferences | R2 | IMPLEMENTED; broader persistence review pending |
-| GAME-007 | No network, account, analytics or sensitive permission is required | Manifest and dependency review | R1 | IMPLEMENTED; no ad SDK/network integration |
-| GAME-008 | User can pause and resume without advancing physics while paused | JVM pause test and emulator pause/resume flow | R2 | PASS on previous version 1.1 CI |
-| GAME-009 | Sound effects can be muted; choice persists | Emulator test toggles SharedPreferences-backed preference twice | R2 | PASS on previous version 1.1 CI |
-| GAME-010 | Continue after game over preserves score and is available once per run | JVM continue tests and emulator continue flow | R2 | PASS on previous version 1.1 CI |
-| GAME-011 | Menu sky and bird have subtle idle animation without gameplay updates | Canvas review plus READY-state emulator smoke | R2 | IMPLEMENTED; candidate CI pending |
-| GAME-012 | How to Play explains tap, pipes, pause and continue; can be dismissed | Compose test howToPlayOverlayCanBeOpenedAndDismissed | R2 | IMPLEMENTED; candidate CI pending |
-| GAME-013 | Android Back pauses active play, and Back from pause/game over returns to menu | Compose test systemBackPausesFlightAndReturnsToMenuFromPause | R2 | IMPLEMENTED; candidate CI pending |
-| GAME-014 | Leaving the foreground pauses active play and returning requires Resume | Compose lifecycle test plus engine pause invariant | R2 | IMPLEMENTED; candidate CI pending |
-| GAME-015 | Long menu and overlay content remains scrollable on short screens | Bounded scroll containers and emulator layout smoke | R2 | IMPLEMENTED; manual small-device review pending |
-| ENG-001 | Reproducible Gradle build | Candidate CI run builds debug APK | R3 | PASS on previous version 1.1 CI |
-| ENG-002 | Unit tests, lint and emulator UI tests run with retrievable evidence | GitHub Actions validation and uploaded artifact | R3 | Previous version 1.1 PASS; version 1.2 validation pending |
-| ENG-003 | Repository memory records the current branch, tested commit, and remaining work | Review .autonomous files at each checkpoint | R2 | IN PROGRESS |
+| GAME-001 | App opens to a usable animated menu | Emulator test checks title/start/sound/mode controls | R2 | PASS v1.2 candidate CI |
+| GAME-002 | Tap-to-flap, pipes, collisions and scoring | Engine JVM tests plus emulator flow | R2 | PASS v1.2 candidate CI |
+| GAME-003 | Pause/resume does not advance physics while paused | Engine JVM test + emulator pause/resume | R2 | PASS v1.2 candidate CI |
+| GAME-004 | Sound can be muted and preference persists | Compose test + SharedPreferences assertion | R2 | PASS v1.2 candidate CI |
+| GAME-005 | One free continue preserves score and can be used once per run | Engine and emulator tests | R2 | PASS v1.2 candidate CI |
+| GAME-006 | How To Play, system Back and lifecycle auto-pause work | Emulator UI tests | R2 | PASS v1.2 candidate CI |
+| GAME-007 | No ad SDK, account, analytics, network requirement or store upload | Dependency/manifest review | R1 | PASS; rewarded ads intentionally deferred |
+| GAME-008 | Chill, Classic, Wild have different physics and obstacle geometry | Engine test checks speed, gap height, flap strength and valid gaps | R2 | IMPLEMENTED; v1.3 CI pending |
+| GAME-009 | Selected mode persists across launches | Compose test checks saved preference | R2 | IMPLEMENTED; v1.3 CI pending |
+| GAME-010 | Difficulty is locked for an active or paused flight | Engine state test | R2 | IMPLEMENTED; v1.3 CI pending |
+| GAME-011 | Continuing after a crash keeps current mode and score | Engine test checks continued pipe geometry and preserved score | R2 | IMPLEMENTED; v1.3 CI pending |
+| GAME-012 | The pipe art matches the gap geometry used by collision detection | Canvas rendering uses each pipe's stored gap height | R2 | IMPLEMENTED; v1.3 CI pending |
+| ENG-001 | Reproducible Android build | GitHub Actions builds debug APK | R3 | PASS v1.2 candidate CI; v1.3 pending |
+| ENG-002 | JVM tests, lint and API 36 emulator tests run with evidence | Android validation workflow and uploaded artifact | R3 | v1.2 candidate PASS; v1.3 pending |
+| ENG-003 | Repository memory tracks branch, run evidence and remaining work | Review .autonomous files at each checkpoint | R2 | IN PROGRESS |
