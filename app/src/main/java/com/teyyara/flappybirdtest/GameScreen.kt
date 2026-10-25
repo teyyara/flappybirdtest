@@ -4,6 +4,7 @@ import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -35,7 +36,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.Lifecycle
@@ -55,7 +59,11 @@ fun GameScreen() {
     val preferences = remember(context) {
         context.getSharedPreferences("sky_hopper_preferences", Context.MODE_PRIVATE)
     }
-    val engine = remember { GameEngine() }
+    val engine = remember {
+        GameEngine().apply {
+            selectCharacter(BirdCharacter.fromPreference(preferences.getString("bird_character", BirdCharacter.SUNNY.name)))
+        }
+    }
     val lifecycleOwner = LocalLifecycleOwner.current
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
     val toneGenerator = remember(context) {
@@ -72,6 +80,9 @@ fun GameScreen() {
     var selectedDifficulty by remember {
         mutableStateOf(FlightDifficulty.fromPreference(preferences.getString("flight_difficulty", FlightDifficulty.CLASSIC.name)))
     }
+    var selectedCharacter by remember {
+        mutableStateOf(BirdCharacter.fromPreference(preferences.getString("bird_character", BirdCharacter.SUNNY.name)))
+    }
     var hasUsedContinue by remember { mutableStateOf(false) }
     var showHowToPlay by remember { mutableStateOf(false) }
     var worldWidth by remember { androidx.compose.runtime.mutableFloatStateOf(360f) }
@@ -80,6 +91,7 @@ fun GameScreen() {
         if (soundEnabled) toneGenerator.startTone(tone, durationMillis)
     }
     val startNewRun = {
+        engine.selectCharacter(selectedCharacter)
         engine.selectDifficulty(selectedDifficulty)
         engine.startGame(worldWidth)
         score = 0
@@ -244,6 +256,15 @@ fun GameScreen() {
                                 )
                             }
                         }
+                        Spacer(Modifier.height(15.dp))
+                        CharacterSelector(
+                            selected = selectedCharacter,
+                            onSelect = { selection ->
+                                selectedCharacter = selection
+                                engine.selectCharacter(selection)
+                                preferences.edit().putString("bird_character", selection.name).apply()
+                            }
+                        )
                         Spacer(Modifier.height(17.dp))
                         DifficultySelector(
                             selected = selectedDifficulty,
@@ -441,6 +462,95 @@ private fun BoxScope.OverlayCard(content: @Composable () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             content()
+        }
+    }
+}
+
+@Composable
+private fun CharacterSelector(
+    selected: BirdCharacter,
+    onSelect: (BirdCharacter) -> Unit
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            "CHOOSE YOUR BIRD",
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 10.sp,
+            letterSpacing = 1.2.sp,
+            fontWeight = FontWeight.Black,
+            color = Color(0xFF4A8A91),
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(8.dp))
+        BirdCharacter.values().toList().chunked(2).forEach { characterRow ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                characterRow.forEach { character ->
+                    val isSelected = character == selected
+                    Button(
+                        onClick = { onSelect(character) },
+                        modifier = Modifier.weight(1f).heightIn(min = 68.dp)
+                            .testTag("birdCharacter${character.name}")
+                            .semantics {
+                                contentDescription = "Select ${character.displayName} bird, ${if (isSelected) "selected" else "not selected"}"
+                            },
+                        shape = RoundedCornerShape(14.dp),
+                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 7.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (isSelected) Color(0xFFFFE29B) else Color(0xFFE7F3F1),
+                            contentColor = Color(0xFF19364A)
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            BirdCharacterPreview(character)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(
+                                    character.displayName,
+                                    fontSize = 10.sp,
+                                    letterSpacing = 0.3.sp,
+                                    fontWeight = FontWeight.Black,
+                                    maxLines = 1
+                                )
+                                Text(
+                                    character.tagline,
+                                    modifier = Modifier.padding(top = 2.dp),
+                                    fontSize = 8.sp,
+                                    lineHeight = 10.sp,
+                                    maxLines = 2
+                                )
+                            }
+                        }
+                    }
+                }
+                if (characterRow.size == 1) Spacer(Modifier.weight(1f))
+            }
+            Spacer(Modifier.height(7.dp))
+        }
+        Text(
+            "SELECTED: ${selected.displayName}",
+            modifier = Modifier.fillMaxWidth().testTag("selectedBirdLabel"),
+            fontSize = 9.sp,
+            letterSpacing = 1.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF2D6E82),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun BirdCharacterPreview(character: BirdCharacter) {
+    Canvas(modifier = Modifier.size(width = 43.dp, height = 42.dp)) {
+        val scaleFactor = minOf(size.width / 70f, size.height / 50f)
+        withTransform({ scale(scaleFactor, scaleFactor, pivot = Offset.Zero) }) {
+            drawBirdCharacter(character, bx = 34f, by = 27f, rotation = 0f)
         }
     }
 }
