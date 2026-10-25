@@ -22,6 +22,34 @@ class GameFlowTest {
         composeRule.onNodeWithTag("readyTitle").assertExists()
         composeRule.onNodeWithTag("playButton").assertExists()
         composeRule.onNodeWithTag("soundToggle").assertExists()
+        composeRule.onNodeWithTag("difficultyCHILL").assertExists()
+        composeRule.onNodeWithTag("difficultyCLASSIC").assertExists()
+        composeRule.onNodeWithTag("difficultyWILD").assertExists()
+    }
+
+    @Test
+    fun difficultySelectionPersistsAndCanReturnToClassic() {
+        composeRule.mainClock.autoAdvance = false
+        val preferences = composeRule.activity.getSharedPreferences("sky_hopper_preferences", android.content.Context.MODE_PRIVATE)
+
+        composeRule.onNodeWithTag("difficultyWILD").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.runOnIdle {
+            assertEquals("WILD", preferences.getString("flight_difficulty", ""))
+        }
+
+        composeRule.onNodeWithTag("difficultyCHILL").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.runOnIdle {
+            assertEquals("CHILL", preferences.getString("flight_difficulty", ""))
+        }
+
+        // Restore Classic so later flow tests have predictable, balanced physics.
+        composeRule.onNodeWithTag("difficultyCLASSIC").performClick()
+        composeRule.mainClock.advanceTimeByFrame()
+        composeRule.runOnIdle {
+            assertEquals("CLASSIC", preferences.getString("flight_difficulty", ""))
+        }
     }
 
     @Test
