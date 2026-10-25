@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-10-20",
+  "checked_at": "2026-10-25",
   "repository": {
     "full_name": "teyyara/flappybirdtest",
     "visibility": "public",
@@ -26,7 +26,17 @@
     "next_run": "expected on the current toolchain remediation commit",
     "standard_runner_cost": "official GitHub documentation says standard GitHub-hosted runners are free for public repositories",
     "secrets_required": false,
-    "result_access": "GitHub connector can inspect run status, job logs and artifacts"
+    "result_access": "GitHub connector read access verified for workflow status, steps, logs, artifacts and reports",
+    "latest_pr_validation_run": "40203219590: SUCCESS",
+    "latest_main_validation_run": {
+      "id": 40203844680,
+      "status": "SUCCESS",
+      "commit": "31f13853f4b91ebfb770f16b97b4b72a2b4c37b6",
+      "artifact_id": 12603555379,
+      "jvm_tests": "16 passed, 0 failures/errors",
+      "emulator_ui_tests": "9 passed, 0 failures/errors on Android API 36",
+      "lint": "0 errors, 16 warnings"
+    }
   },
   "secrets": {
     "production_secrets_required": false,

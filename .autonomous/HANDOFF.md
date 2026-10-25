@@ -1,34 +1,40 @@
-# Handoff
+# Handoff — Sky Hopper v1.4
+
+Updated: 2026-10-25
 
 ## Current objective
-Finish and validate launch-menu bird character selection for Sky Hopper v1.4. Play Console remains deferred.
+Get real-device acceptance of the validated v1.4 APK. The next feature unit should begin after physical-device feedback or a new explicit priority change.
 
-## Candidate
-- Branch: feature/bird-character-selection-final
-- Candidate version: 1.4, versionCode 5, application ID com.teyyara.flappybirdtest.
-- Base commit: 917202db9da2f0c718e47605f9bb011fb9cbf7f1 (merged v1.3).
-- This branch contains the latest character-selection code and tests; open a fresh PR targeting main to avoid inheriting the older PR's stalled emulator run.
+## Verified repository state
+- Repository: https://github.com/teyyara/flappybirdtest
+- Default branch: `main`
+- Application/source commit: `31f13853f4b91ebfb770f16b97b4b72a2b4c37b6`
+- App identity: `com.teyyara.flappybirdtest`, versionName `1.4`, versionCode `5`, minimum API 24, compile/target API 36.
+- Play Console work is explicitly deferred. No store upload or publication was performed.
 
-## Features implemented
-- Four playable birds: Sunny, Berry, Mint, and Ember, with distinct colors and signature accessories.
-- Four character preview cards at launch; selected option is highlighted and named.
-- Shared Canvas renderer is used for menu previews and gameplay.
-- Selection is saved in SharedPreferences and applied to the engine at launch; it remains fixed through pause and one-time continue.
-- All characters use identical physics and collision size.
-- Character selection tests cover valid choices, persistence, invalid preference fallback, and selection lock during play.
-- Launch-menu test asserts that the character choices, selected label, difficulty controls, sound toggle, help, and Start Flight are displayed, not merely present in the semantics tree.
+## Implemented
+- Native Kotlin + Jetpack Compose game UI with Canvas-rendered scenery, obstacles, and bird artwork.
+- Animated launch menu; Start Flight; How to Play; saved sound toggle; personal-best display; CHILL / CLASSIC / WILD difficulty.
+- Four selectable characters: Sunny (gold), Berry (purple + sparkle), Mint (teal + leaf), and Ember (coral + crest).
+- Selection persists locally and drives both the menu preview and actual in-flight bird. Character cosmetics do not change hitbox or physics.
+- Pause/resume/restart/menu return, one free continue after game over, system Back handling, and lifecycle auto-pause.
 
-## Validation history / failure analysis
-- v1.3 main validation passed in run 40196050574.
-- Character candidate run 40199740196 passed JVM tests, lint, and debug build but failed four emulator UI assertions. The main issue was that Start Flight was too low in the launch menu and test clicks did not reach a run.
-- The final candidate moves character selection and Start Flight near the top and removes a redundant difficulty heading. The main-menu test checks visibility explicitly.
-- Run 40202325668 remained on the emulator step without publishing a result; it is not treated as a pass. The final branch has a fresh PR ref for a conclusive validation run.
-- Merge only after the fresh run's JVM tests, lint, debug build, and complete emulator suite pass.
+## Validation evidence
+- Pull-request candidate run [40203219590](https://github.com/teyyara/flappybirdtest/actions/runs/40203219590): SUCCESS; all build/unit/lint/emulator/evidence steps completed on the final character-selection candidate.
+- Post-merge main run [40203844680](https://github.com/teyyara/flappybirdtest/actions/runs/40203844680): SUCCESS on main commit `31f13853f4b91ebfb770f16b97b4b72a2b4c37b6`; every workflow step passed, including the Android Emulator UI suite.
+- JVM tests: 16 passed, 0 failures, 0 errors.
+- Android API 36 emulator UI tests: 9 passed, 0 failures, 0 errors. Covered main-menu visibility, character selection/persistence, difficulty persistence, sound preference, How to Play, start/pause/resume, background auto-pause, system Back, and one-time continue.
+- Android Lint: 0 errors and 16 warnings. Warnings are retained transparently; this is not a warning-free lint run.
+- Local toolchain limitation: this session has no Android SDK, Gradle, adb, or emulator. The successful build/test evidence is from GitHub-hosted CI, not a physical phone.
 
-## Toolchain and constraints
-- Android Gradle Plugin 8.13.2, Gradle 8.13, Kotlin 2.2.10, Compose BOM 2026.01.00, JDK 17.
-- Compile/target SDK 36; minimum API 24.
-- Local environment lacks Android SDK, Gradle, adb, and emulator; remote CI is required.
-- Release signing remains environment-only. Never commit or print keystore bytes or passwords.
-- Physical-device testing remains pending until the user installs the APK and reports feedback.
-- No ad SDK, network services, or Play Console operations are included.
+## Current downloadable artifact
+- CI artifact ID: `12603555379` from main validation run `40203844680`.
+- APK path inside artifact: `app/build/outputs/apk/debug/app-debug.apk`.
+- APK SHA-256: `643ba9185a89ecae9002bba67af28c23b45a333b602e64bd90bd8edd6ec44774`.
+- It is a debug/testing APK, not a signed store release. The local session copy was extracted and its SHA-256 verified against the artifact manifest.
+
+## Known limitations and next action
+- Physical-device installation/testing is still NOT RUN.
+- Install the v1.4 APK on the user's Android phone. Verify first launch, selecting each bird, persistence after closing/reopening, difficulty and sound persistence, a flight, pause/resume, and the single continue after game over.
+- Then record device/Android version and any issue observed; only then choose the next polish/progression unit.
+- Do not add ads, network services, release signing secrets, or Play Console work without explicit authorization.

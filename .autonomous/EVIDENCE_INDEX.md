@@ -1,22 +1,31 @@
 # Evidence index
 
-## Latest verified candidate
-- Workflow: [Android validation run 40192044874](https://github.com/teyyara/flappybirdtest/actions/runs/40192044874).
-- Feature-branch commit: `1bc4fc9322a3c350a632df5f775ed449c54fd3f7`; tested PR merge commit recorded by the runner: `2c7408f6e14a4942f505ec58f89df44d0135af30`.
-- Conclusion: SUCCESS. SDK setup, JVM tests, lint, debug APK build, hosted KVM setup, Android emulator UI journey, and evidence upload completed.
-- JVM report: 10 tests, no failures or errors.
-- Emulator UI report: 4 tests, no failures/errors—menu controls, persistent sound preference, pause/resume, and one-time continue after game over.
-- Lint: 0 errors, 11 warnings. Outstanding advisories include portrait-only orientation, target/dependency updates, backup-data rules, and KTX use suggestions. None are marked fixed or suppressed here.
-- Candidate app: `com.teyyara.flappybirdtest`, versionName `1.1`, versionCode `2`.
-- Debug APK SHA-256: `2c536ec1262457b7f466f256ae83bf5ebe85b8378ea6fe36c3755e4b077c518a`.
-- Evidence artifact: `sky-hopper-evidence-2c7408f6e14a4942f505ec58f89df44d0135af30`, artifact ID `12598588175`, includes the built APK, APK digest, manifest, JVM report, instrumentation XML/logs, and lint reports.
+## Current verified main candidate — Sky Hopper v1.4
+- Source commit: `31f13853f4b91ebfb770f16b97b4b72a2b4c37b6`.
+- Workflow: [Android validation run 40203844680](https://github.com/teyyara/flappybirdtest/actions/runs/40203844680), run #35 on `main`.
+- Conclusion: SUCCESS. SDK setup, JVM tests, lint, debug APK build, KVM setup, Android API 36 emulator UI tests, and artifact upload completed.
+- JVM tests: 16, 0 failures/errors.
+- Emulator UI tests: 9, 0 failures/errors, including character selection persistence and visible launch-menu controls.
+- Lint: 0 errors, 16 warnings; advisories remain visible and unsuppressed.
+- Package/version: `com.teyyara.flappybirdtest`, v1.4, versionCode 5, min API 24, target API 36.
+- CI artifact: `sky-hopper-evidence-31f13853f4b91ebfb770f16b97b4b72a2b4c37b6`, ID `12603555379`, GitHub-reported digest `sha256:45a3098870e0d7c6dacd0087fbc6034593abec3fa273890d2523b247e425be78`.
+- APK SHA-256: `643ba9185a89ecae9002bba67af28c23b45a333b602e64bd90bd8edd6ec44774`.
 
-## Previous verified checkpoints
-- Run 39435122447 on main commit `1d4d58f0e2de798314043aad0e255d6d04f7907c`: Android validation passed before the menu upgrade.
-- Run 40190067246 on the same main commit: signed version 1.0 App Bundle built and signature verification passed; this is a prior artifact and was not submitted to Play Console or distributed.
-- Run 40191612742 failed due to incorrect imports in the new Compose UI test source. The issue was fixed in the next branch commit; run 40192044874 validates that corrected source.
+## Final character-selection PR validation
+- Workflow: [run 40203219590](https://github.com/teyyara/flappybirdtest/actions/runs/40203219590), PR candidate head `d2ed9d011e3b9e38ef52aa1c201ab74858cdb913`.
+- Conclusion: SUCCESS; all build/unit/lint/emulator/evidence steps completed.
+- The CI manifest for this PR workflow records synthetic pull-request merge commit `15c2b9cf7710d3aca956480525dc44493737201f`.
 
-## Pending
-- Add this refreshed memory to the feature branch, revalidate the exact resulting candidate, then merge PR #1 only with green checks.
-- Inspect validation on resulting main commit and download the matching version 1.1 debug APK for the user to install/test on their phone.
-- Physical-device validation of the new menu/continue experience remains outstanding.
+## Resolved failure history
+- Run `40199740196` exposed launch-menu reachability failures after character choices increased menu height.
+- The launch menu was compacted, character selection and Start Flight were moved near the top, and visibility assertions were strengthened.
+- Run `40202325668` was cancelled before the emulator suite could finish and is not a pass.
+- Final PR run `40203219590` and post-merge main run `40203844680` both passed the emulator suite. The earlier layout issue is resolved for the tested configuration.
+
+## Previous checkpoint
+- Version 1.1 validation run `40192044874` passed its then-applicable 10 JVM and 4 emulator tests. This is retained as historical evidence and does not replace v1.4 evidence.
+
+## Limits
+- Emulator results do not certify every physical Android phone.
+- Physical-device acceptance remains NOT RUN.
+- No Play Store release or publication was performed.

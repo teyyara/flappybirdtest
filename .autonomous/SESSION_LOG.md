@@ -29,3 +29,12 @@
 ## Next bounded work
 - Refresh persistent documentation/memory against these results, rerun CI on the updated candidate, merge only after fresh green checks, then inspect main CI and retrieve the current version 1.1 debug APK.
 - Defer Play Console; next feature unit can inspect Android lifecycle auto-pause, adaptive layout/accessibility, and richer original game polish.
+
+## 2026-10-25 — Reconcile and verify Sky Hopper v1.4 main checkpoint
+- Re-read repository strategy, user instructions, state, handoff, plan, requirements, capability notes, test execution, evidence, failure history, and decision log before acting.
+- Inspected main commit `31f13853f4b91ebfb770f16b97b4b72a2b4c37b6` and confirmed the character-selection source was merged.
+- PR validation run `40203219590` completed successfully; post-merge main push run `40203844680` also completed successfully.
+- Retrieved main-run evidence artifact `12603555379`, inspected reports and metadata, and extracted the v1.4 debug APK. The artifact manifest identifies the same main commit. APK SHA-256 verified as `643ba9185a89ecae9002bba67af28c23b45a333b602e64bd90bd8edd6ec44774`.
+- JVM tests: 16 passed; Android API 36 emulator UI tests: 9 passed; lint: 0 errors and 16 warnings.
+- Corrected stale project memory that still claimed final v1.4 validation was pending. Physical-device acceptance and Play Console work remain outstanding/deferred.
+- Next bounded action: user tests the APK on the actual phone and reports any defects before the next feature unit.
