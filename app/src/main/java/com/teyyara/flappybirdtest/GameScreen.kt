@@ -256,7 +256,15 @@ fun GameScreen() {
                                 )
                             }
                         }
-                        Spacer(Modifier.height(15.dp))
+                        Spacer(Modifier.height(12.dp))
+                        ActionButton(
+                            label = "HOW TO PLAY",
+                            testTag = "howToPlayButton",
+                            onClick = { showHowToPlay = true },
+                            primary = false,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(Modifier.height(10.dp))
                         CharacterSelector(
                             selected = selectedCharacter,
                             onSelect = { selection ->
@@ -286,14 +294,6 @@ fun GameScreen() {
                             enabled = soundEnabled,
                             compact = false,
                             onToggle = toggleSound,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                        Spacer(Modifier.height(9.dp))
-                        ActionButton(
-                            label = "HOW TO PLAY",
-                            testTag = "howToPlayButton",
-                            onClick = { showHowToPlay = true },
-                            primary = false,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Text(
