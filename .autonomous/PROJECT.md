@@ -4,13 +4,13 @@
 - Package/application ID: com.teyyara.flappybirdtest.
 - Stack: Kotlin, Jetpack Compose, Canvas; compile/target SDK 36; minimum API 24.
 - Build toolchain: Android Gradle Plugin 8.13.2, Gradle 8.13, Kotlin 2.2.10, Compose BOM 2026.01.00, JDK 17 in CI.
-- Architecture: GameEngine owns frame-step physics, pipes, score, and collisions. GameCanvas draws original art, animates the menu scene, and advances the engine only while status is PLAYING. GameScreen owns menus/overlays, local preferences, audio effects, lifecycle pause, and navigation.
-- Core flows: animated menu/start, How to Play, tap-to-flap, active score HUD/mute/pause, pause/resume/restart/main-menu, and one free continue after game over that preserves score.
-- Lifecycle/back: active gameplay pauses on Android ON_PAUSE; Android Back pauses an active flight, returns from pause/game over to the menu, and closes the help overlay first.
-- Accessibility/layout: labeled sound and pause controls; long menu and overlay content scrolls within display-height constraints.
-- Candidate version: 1.2 (versionCode 3) on feature/lifecycle-accessibility-polish.
+- Architecture: GameEngine owns frame-step physics, pipes, score, collisions, and difficulty presets. GameCanvas draws the world and uses each pipe's actual gap geometry. GameScreen owns menu/overlays, local preferences, sound effects, lifecycle pause, navigation, and difficulty selection.
+- Main menu: animated sky/bird, Start Flight, saved mute toggle, personal best, How to Play, and selectable Chill / Classic / Wild mode.
+- Difficulty: each preset sets pipe speed, gap height, gravity, flap impulse, and spacing. The selected mode is persisted locally and locked for the duration of a run; continue uses the same mode.
+- Core game flows: tap-to-flap, score HUD, pause/resume/restart/main-menu, one free continue after game over, How to Play guide, system Back, and auto-pause on Android ON_PAUSE.
+- Candidate version: 1.3 (versionCode 4) on feature/flight-difficulty-modes.
 - External services: none. No network permission, analytics, account, payment, or ad SDK.
-- Distribution: no store upload or publication authorized; user explicitly deferred Play Console work.
+- Distribution: no store upload/publication authorized; the user explicitly deferred Play Console work.
 - Build: ./gradlew testDebugUnitTest lintDebug assembleDebug.
 - Runtime tests: ./gradlew connectedDebugAndroidTest; remote validation uses Android API 36 emulator.
-- Local execution limitation: ChatGPT coding environment has no Android SDK, Gradle, adb, or emulator; use GitHub Actions and inspect its artifacts/logs.
+- Local execution limitation: this agent environment has no Android SDK, Gradle, adb or emulator; use remote CI and inspect its reports/artifacts.
