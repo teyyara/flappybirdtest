@@ -175,6 +175,44 @@ class GameEngineTest {
     }
 
     @Test
+    fun characterSelectionIsUsedForRunAndOneTimeContinue() {
+        val engine = GameEngine(seed = 1)
+        engine.selectCharacter(BirdCharacter.BERRY)
+        engine.startGame(360f)
+        assertEquals(BirdCharacter.BERRY, engine.character)
+
+        engine.birdY = GameEngine.GROUND_TOP
+        engine.update(1f / 60f, 360f)
+        assertEquals(GameStatus.GAME_OVER, engine.status)
+        assertTrue(engine.continueAfterGameOver(360f))
+        assertEquals(BirdCharacter.BERRY, engine.character)
+    }
+
+    @Test
+    fun characterCannotChangeDuringActiveOrPausedFlight() {
+        val engine = GameEngine(seed = 1)
+        engine.selectCharacter(BirdCharacter.EMBER)
+        engine.startGame(360f)
+        engine.selectCharacter(BirdCharacter.MINT)
+        assertEquals(BirdCharacter.EMBER, engine.character)
+
+        engine.pauseGame()
+        engine.selectCharacter(BirdCharacter.BERRY)
+        assertEquals(BirdCharacter.EMBER, engine.character)
+
+        engine.returnToMenu(360f)
+        engine.selectCharacter(BirdCharacter.MINT)
+        assertEquals(BirdCharacter.MINT, engine.character)
+    }
+
+    @Test
+    fun invalidCharacterPreferenceFallsBackToSunny() {
+        assertEquals(BirdCharacter.SUNNY, BirdCharacter.fromPreference(null))
+        assertEquals(BirdCharacter.SUNNY, BirdCharacter.fromPreference("UNKNOWN_BIRD"))
+        assertEquals(BirdCharacter.BERRY, BirdCharacter.fromPreference("BERRY"))
+    }
+
+    @Test
     fun returningToMenuClearsThePreviousRun() {
         val engine = GameEngine(seed = 1)
         engine.startGame(360f)
